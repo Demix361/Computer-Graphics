@@ -54,14 +54,6 @@ def time_test(line_len):
     end = time()
     time_wu = (end - beg) / n
 
-
-    print("dda:", time_dda)
-    print("br_float", time_br_float)
-    print("br_int", time_br_int)
-    print("br_smooth", time_br_smooth)
-    print("wu", time_wu)
-    print()
-
     data_names = ["ЦДА", "Брезенхем", "Брезенхем\nцелочисленный",
                   "Брезенхем без\nступенчатости", "Алгоритм Ву"]
     data_values = [time_dda, time_br_float, time_br_int, time_br_smooth, time_wu]
@@ -74,6 +66,7 @@ def time_test(line_len):
     plt.xticks(ind, data_names)
     plt.title("Время постороения отрезка длины " + str(int(line_len)) + " пикс.")
     plt.show()
+
 
 def step_test(line_len, alg):
     lines = []
@@ -94,12 +87,10 @@ def step_test(line_len, alg):
         cur += angle * pi / 180
 
     n = len(lines)
-    print("n ", n)
 
     for line in lines:
         if line[6] == 0:
             steps.append(step_dda(line[0], line[1], line[2], line[3]))
-            #print("x1: ", line[0], "\t\ty1: ", line[1], "\nx2: ", line[2], "\t\ty2: ", line[3])
         if line[6] == 1:
             steps.append(step_br_int(line[0], line[1], line[2], line[3]))
         if line[6] == 2:
