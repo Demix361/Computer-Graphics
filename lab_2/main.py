@@ -4,33 +4,29 @@ import copy
 from math import cos, sin, pi, sqrt
 
 
-
+# Hides/shows axes
 def hide_func(hide):
     if hide.get() == 1:
         Can.delete("all")
         draw_points(ActionsStack[-1])
     if hide.get() == 0:
         over_func(OverVar)
-        #Can.delete("all")
-        #draw_axis()
-        #draw_points(ActionsStack[-1])
 
+
+# Makes axes over/under picture
 def over_func(over):
     if HideVar.get() == 0:
         if over.get() == 1:
             Can.delete("all")
             draw_points(ActionsStack[-1])
-            draw_axis()
+            draw_axes()
         if over.get() == 0:
             Can.delete("all")
-            draw_axis()
+            draw_axes()
             draw_points(ActionsStack[-1])
 
-def create_rotatable_oval(can, rectangle):
-    # find angle of rect
-    pass
 
-
+# Draws points
 def draw_points(points):
     for pol in points[0]:
         Can.create_polygon(pol, fill="white", outline="black")
@@ -39,18 +35,13 @@ def draw_points(points):
         Can.create_line(line)
 
     for oval in points[2]:
-        # Can.create_oval(oval)
-        # Oval as many points:
         Can.create_line(oval)
-        # Oval as 4 points:
-        #create_rotatable_oval(Can, rectangle)
 
     for arc in points[3]:
-        # Can.create_arc(arc, start=0, extent=180)
-        # Arc as many points:
         Can.create_line(arc)
 
 
+# Creates points on default position
 def get_default_points(ox, oy):
     points = [[], [], [], []]
 
@@ -68,24 +59,19 @@ def get_default_points(ox, oy):
     points[1].append([[ox - 25, oy - 150], [ox + 25, oy - 150]])
 
     # Oval:
-    #points[2].append([[ox - 25, oy - 175], [ox + 25, oy - 125]])
-    # Oval as many points:
     ellipse = get_ellipse([ox, oy - 150], 25, 25)
     for i in range(len(ellipse)):
         points[2].append(ellipse[i])
-    # Oval as 4 points:
-    #points[2].append([[ox-25,oy-175],[ox+25,oy-175],[ox+25, oy-125],[ox-25, oy-125]])
-
 
     # Arc:
-    # points[3].append([[ox - 150, oy - 78], [ox - 50, oy - 42]])
-    # Arc as many points:
     arc = get_arc([ox - 100, oy - 60], 50, 18)
     for i in range(len(arc)):
         points[3].append(arc[i])
 
     return points
 
+
+# Creeates ellipse as many lines
 def get_ellipse(centre, a, b):
     ellipse = []
     num = 60
@@ -106,6 +92,8 @@ def get_ellipse(centre, a, b):
 
     return ellipse
 
+
+# Creates arc as many lines
 def get_arc(centre, a, b):
     arc = []
     num = 60
@@ -121,8 +109,8 @@ def get_arc(centre, a, b):
     return arc
 
 
-
-def draw_axis():
+# Draws axes
+def draw_axes():
     Can.create_line([OX, 0], [OX, can_h])
     Can.create_line([0, OY], [can_w, OY])
     Can.create_polygon([OX, can_h], [OX - 5, can_h - 10], [OX + 5, can_h - 10])
@@ -131,6 +119,7 @@ def draw_axis():
     Can.create_text(can_w - 10, OY - 15, text="X", font=Font)
 
 
+# Moves points, adds them in stack and rebuilds picture
 def move(dx, dy):
     try:
         dx = float(dx.get())
@@ -138,7 +127,6 @@ def move(dx, dy):
     except ValueError:
         messagebox.showinfo("Внимание", "Неверные данные!")
         return -1
-
 
     ActionsStack.append(copy.deepcopy(ActionsStack[-1]))
     for form in ActionsStack[-1]:
@@ -149,18 +137,21 @@ def move(dx, dy):
 
     rebuild_scene()
 
+
+# Deletes and draws picture
 def rebuild_scene():
     Can.delete("all")
     if HideVar.get() == 1:
         draw_points(ActionsStack[-1])
     elif OverVar.get() == 0:
-        draw_axis()
+        draw_axes()
         draw_points(ActionsStack[-1])
     elif OverVar.get() == 1:
         draw_points(ActionsStack[-1])
-        draw_axis()
+        draw_axes()
 
 
+# Prints ActionStack
 def print_stack():
     print("==========STACK==========")
     print("Stack length: " + str(len(ActionsStack)))
@@ -182,15 +173,20 @@ def print_stack():
     print()
 
 
+# Adds default points into stack and rebuilds picture
 def reset():
     ActionsStack.append(get_default_points(OX, OY))
     rebuild_scene()
 
+
+# Cancels last action and draws previous
 def cancel():
     if len(ActionsStack) > 1:
         ActionsStack.pop(-1)
         rebuild_scene()
 
+
+# Scales points, adds them in stack and rebuilds picture
 def scale(kx, ky, xc, yc):
     try:
         kx = float(kx.get())
@@ -210,6 +206,8 @@ def scale(kx, ky, xc, yc):
 
     rebuild_scene()
 
+
+# Turns points, adds them in stack and rebuilds picture
 def turn(xc, yc, angle):
     try:
         xc = float(xc.get())
@@ -234,11 +232,16 @@ def turn(xc, yc, angle):
 
     rebuild_scene()
 
+
+# Cos of angle from rads to degrees
 def d_cos(a):
     return cos(a * pi / 180)
 
+
+# Sin of angle from rads to degrees
 def d_sin(a):
     return sin(a * pi / 180)
+
 
 # Main window
 root = Tk()
@@ -345,13 +348,10 @@ Buttons.rowconfigure(3, weight=1)
 root.columnconfigure(1, weight=1)
 
 
-# Main programm
-
+# Main program
 Points = get_default_points(OX, OY)
-draw_axis()
+draw_axes()
 draw_points(Points)
 ActionsStack.append(Points)
-
-
 
 root.mainloop()
