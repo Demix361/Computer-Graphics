@@ -1,19 +1,35 @@
-from algorithms import *
+from PyQt5.QtGui import QColor
+from algorithms import sign, fpart
 
+
+def change_color(line_color, bg_color, intensity):
+    intensity = 1 - intensity
+
+    dr = bg_color[0] - line_color[0]
+    dg = bg_color[1] - line_color[1]
+    db = bg_color[2] - line_color[2]
+
+    new_color = QColor(dr * intensity, dg * intensity, db * intensity)
+
+    return 0
+
+
+#=====TIME MEASURE=====
 def test_dda(x1, y1, x2, y2):
     len_x = abs(int(x2) - int(x1))
     len_y = abs(int(y2) - int(y1))
 
     if len_x == 0 and len_y == 0:
-        #
+        # draw pix
         return 1
 
     n = max(len_x, len_y)
 
-    dx = find_dx(x1, x2, len_x / n)
-    dy = find_dx(y1, y2, len_y / n)
+    dx = ((x2 > x1) - (x2 < x1)) * len_x / n
+    dy = ((y2 > y1) - (y2 < y1)) * len_y / n
 
     for i in range(n + 1):
+        # draw pix
         x1 = int(x1)
         y1 = int(y1)
         x1 += dx
@@ -21,12 +37,13 @@ def test_dda(x1, y1, x2, y2):
 
     return 0
 
+
 def test_br_float(x1, y1, x2, y2):
     dx = x2 - x1
     dy = y2 - y1
 
     if dx == 0 and dy == 0:
-        #
+        # draw pix
         return 1
 
     x = x1
@@ -48,7 +65,7 @@ def test_br_float(x1, y1, x2, y2):
     e = m - 0.5
 
     while x != x2 or y != y2:
-        #
+        # draw pix
         if e >= 0:
             if change == 0:
                 y += sy
@@ -64,12 +81,13 @@ def test_br_float(x1, y1, x2, y2):
 
     return 0
 
+
 def test_br_int(x1, y1, x2, y2):
     dx = x2 - x1
     dy = y2 - y1
 
     if dx == 0 and dy == 0:
-        #
+        # draw pix
         return 1
 
     sx = sign(dx)
@@ -89,7 +107,7 @@ def test_br_int(x1, y1, x2, y2):
     new_dy = dy * 2
     
     while x1 != x2 or y1 != y2:
-        #
+        # draw pix
         if e >= 0:
             if change == 0:
                 y1 += sy
@@ -105,6 +123,7 @@ def test_br_int(x1, y1, x2, y2):
 
     return 0
 
+
 def test_br_smooth(x1, y1, x2, y2, line_color, bg_color):
     dx = x2 - x1
     dy = y2 - y1
@@ -113,7 +132,7 @@ def test_br_smooth(x1, y1, x2, y2, line_color, bg_color):
     y = y1
 
     if dx == 0 and dy == 0:
-        #
+        # draw pix
         return 1
 
     sx = sign(dx)
@@ -145,7 +164,7 @@ def test_br_smooth(x1, y1, x2, y2, line_color, bg_color):
     i = 1
     while i <= dx:
         new_color = QColor(line_color[0] + e * d_r, line_color[1] + e * d_g, line_color[2] + e * d_b)
-        #
+        # draw pix
 
         if e <= w:
             if change == 0:
@@ -161,17 +180,18 @@ def test_br_smooth(x1, y1, x2, y2, line_color, bg_color):
 
     return 0
 
+
 def test_wu(x1, y1, x2, y2, line_color, bg_color):
     if x1 == x2 and y1 == y2:
-        #
+        # draw pix
         return 1
 
     if int(x2) - int(x1) == 0:
-        #
+        # draw line
         return 2
 
     if int(y2) - int(y1) == 0:
-        #
+        # draw line
         return 3
 
     steep = abs(y2 - y1) > abs(x2 - x1)
@@ -200,52 +220,39 @@ def test_wu(x1, y1, x2, y2, line_color, bg_color):
 
     if steep:
         change_color(line_color, bg_color, 1)
-        #
+        # draw pix
         change_color(line_color, bg_color, fpart(yend) * xgap)
-        #
+        # draw pix
     else:
         change_color(line_color, bg_color, 1)
-        #
+        # draw pix
         change_color(line_color, bg_color, fpart(yend) * xgap)
-        #
+        # draw pix
 
     intery = yend + grad
 
     # second endpoint
     xend = int(x2 + 0.5)
-    yend = y2 + grad * (xend - x2)
-    xgap = (x2 + 0.5) - int(x2 + 0.5)
     xpx2 = xend
-    ypx2 = int(yend)
 
     # main loop
     if steep:
         for x in range(xpx1, xpx2):
             change_color(line_color, bg_color, 1 - (intery - int(intery)))
-            #
+            # draw pix
             change_color(line_color, bg_color, intery - int(intery))
-            #
+            # draw pix
             intery += grad
     else:
         for x in range(xpx1, xpx2):
             change_color(line_color, bg_color, 1 - (intery - int(intery)))
-            #
+            # draw pix
             change_color(line_color, bg_color, intery - int(intery))
-            #
+            # draw pix
             intery += grad
 
-def change_color(line_color, bg_color, intensity):
-    intensity = 1 - intensity
 
-    dr = bg_color[0] - line_color[0]
-    dg = bg_color[1] - line_color[1]
-    db = bg_color[2] - line_color[2]
-
-    new_color = QColor(dr * intensity, dg * intensity, db * intensity)
-
-    return 0
-
-
+# =====STEP MEASURE=====
 def step_dda(x1, y1, x2, y2):
     len_x = abs(int(x2) - int(x1))
     len_y = abs(int(y2) - int(y1))
@@ -255,8 +262,8 @@ def step_dda(x1, y1, x2, y2):
 
     n = max(len_x, len_y)
 
-    dx = find_dx(x1, x2, len_x / n)
-    dy = find_dx(y1, y2, len_y / n)
+    dx = ((x2 > x1) - (x2 < x1)) * len_x / n
+    dy = ((y2 > y1) - (y2 < y1)) * len_y / n
 
     steep = abs(y2 - y1) > abs(x2 - x1)
 
@@ -289,6 +296,7 @@ def step_dda(x1, y1, x2, y2):
         y1 += dy
 
     return max_step
+
 
 def step_br_float(x1, y1, x2, y2):
     dx = x2 - x1
@@ -353,6 +361,7 @@ def step_br_float(x1, y1, x2, y2):
 
     return max_step
 
+
 def step_br_int(x1, y1, x2, y2):
     dx = x2 - x1
     dy = y2 - y1
@@ -411,6 +420,7 @@ def step_br_int(x1, y1, x2, y2):
             e += 2 * dy
 
     return max_step
+
 
 def step_br_smooth(x1, y1, x2, y2, line_color, bg_color):
     dx = x2 - x1
@@ -488,6 +498,7 @@ def step_br_smooth(x1, y1, x2, y2, line_color, bg_color):
         i += 1
 
     return max_step
+
 
 def step_wu(x1, y1, x2, y2, line_color, bg_color):
     if x1 == x2 and y1 == y2:

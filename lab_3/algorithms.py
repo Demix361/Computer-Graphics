@@ -15,9 +15,7 @@ def drawline_dda(can, x1, y1, x2, y2):
 
     n = max(len_x, len_y)
 
-    #dx = find_dx(x1, x2, len_x / n)
     dx = ((x2 > x1) - (x2 < x1)) * len_x / n
-    #dy = find_dx(y1, y2, len_y / n)
     dy = ((y2 > y1) - (y2 < y1)) * len_y / n
 
     for i in range(n + 1):
@@ -207,39 +205,23 @@ def drawline_wu(can, x1, y1, x2, y2, line_color, bg_color):
     xgap = 1 - ((x1 + 0.5) - int(x1 + 0.5))
     xpx1 = xend
     ypx1 = int(yend)
-    #"""
+
     if steep:
-        change_color(can, line_color, bg_color, 1)#rfpart(yend) * xgap)
+        change_color(can, line_color, bg_color, 1)
         can.drawPoint(ypx1, xpx1)
         change_color(can, line_color, bg_color, fpart(yend) * xgap)
         can.drawPoint(ypx1, xpx1 + 1)
     else:
-        change_color(can, line_color, bg_color, 1)#rfpart(yend) * xgap)
+        change_color(can, line_color, bg_color, 1)
         can.drawPoint(xpx1, ypx1)
         change_color(can, line_color, bg_color, fpart(yend) * xgap)
         can.drawPoint(xpx1, ypx1 + 1)
-    #"""
 
     intery = yend + grad
 
     # second endpoint
     xend = int(x2 + 0.5)
-    yend = y2 + grad * (xend - x2)
-    xgap = (x2 + 0.5) - int(x2 + 0.5)
     xpx2 = xend
-    ypx2 = int(yend)
-    """
-    if steep:
-        change_color(can, line_color, bg_color, rfpart(yend) * xgap)
-        can.drawPoint(ypx2, xpx2)
-        change_color(can, line_color, bg_color, fpart(yend) * xgap)
-        can.drawPoint(ypx2, xpx2 + 1)
-    else:
-        change_color(can, line_color, bg_color, rfpart(yend) * xgap)
-        can.drawPoint(xpx2, ypx2)
-        change_color(can, line_color, bg_color, fpart(yend) * xgap)
-        can.drawPoint(xpx2, ypx2 + 1)
-    """
 
     # main loop
     if steep:
@@ -287,7 +269,3 @@ def sign(x):
         return -1
     else:
         return 0
-
-
-def find_dx(x1, x2, size):
-    return ((x2 > x1) - (x2 < x1)) * size
