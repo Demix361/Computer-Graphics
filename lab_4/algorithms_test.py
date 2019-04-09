@@ -1,6 +1,7 @@
 from math import cos, sin, pi, sqrt
 
-# Окружности
+
+# ==========CIRCLES TEST==========
 def test_circle_canon(xc, yc, r):
     for x in range(0, r + 1, 1):
         y = round(sqrt(r ** 2 - x ** 2))

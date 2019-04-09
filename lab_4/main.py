@@ -3,6 +3,7 @@ import tkinter.ttk as ttk
 from tkinter import messagebox
 from tkinter.colorchooser import askcolor
 
+# matplotlib to tkinter's canvas
 import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
@@ -12,7 +13,8 @@ from typing import NamedTuple
 from algorithms import *
 from testing import time_test
 
-# Структура Круг
+
+# Circle struct
 class Circle(NamedTuple):
     xc: int
     yc: int
@@ -21,7 +23,7 @@ class Circle(NamedTuple):
     alg: int
 
 
-# Структура Эллипс
+# Ellipse struct
 class Ellipse(NamedTuple):
     xc: int
     yc: int
@@ -31,9 +33,8 @@ class Ellipse(NamedTuple):
     alg: int
 
 
-# Класс приложения
+# App class
 class Kg4App(tk.Tk):
-
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self)
 
@@ -63,9 +64,8 @@ class Kg4App(tk.Tk):
         frame.tkraise()
 
 
-# Класс главной страницы
+# Main page class
 class MainPage(tk.Frame):
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
@@ -190,9 +190,8 @@ class MainPage(tk.Frame):
         self.canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand = True)
 
 
-# Класс страницы с графиком
+# Graph page class
 class GraphPage(tk.Frame):
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         button1 = ttk.Button(self, text="Вернуться",
@@ -225,12 +224,12 @@ class GraphPage(tk.Frame):
         #canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand = True)
 
 
-# Выводит на экран предупреждение с текстом
+# Creates window with warning message
 def mes(text):
     messagebox.showinfo("Внимание", text)
 
 
-# Получаем цвет линии
+# Get color for line
 def get_color_line(self):
     color = askcolor()[1]
 
@@ -239,7 +238,7 @@ def get_color_line(self):
         self.label_line_color.configure(bg=color)
 
 
-# Получаем цвет фона и сразу его заменяем
+# Get color for background and change it instantly
 def get_color_bg(self):
     color = askcolor()[1]
 
@@ -250,16 +249,15 @@ def get_color_bg(self):
         self.canvas.configure(bg=self.color_bg)
 
 
-# Очищаем холст
+# Clear canvas
 def clear(self):
-    #self.objects = []
     self.canvas.delete("all")
     self.canvas.configure(bg=self.color_bg)
 
     print("can: ", self.canvas.winfo_width(), self.canvas.winfo_height())
 
 
-# Получаем данные и формируем объект
+# Get data and create object
 def draw(self):
     tab = self.tab_parent.index(self.tab_parent.select())
 
@@ -332,7 +330,7 @@ def draw(self):
         draw_func(self, o)
 
 
-# Отправляем объект на рисовку в нужный алгоритм
+# Draw obj with algorithms
 def draw_func(self, obj):
     self.color_pen = obj.color
 

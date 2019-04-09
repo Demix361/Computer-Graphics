@@ -1,12 +1,13 @@
 from math import cos, sin, pi, sqrt
 
 
+# Place pix on x, y
 def draw_pix(self, x, y):
     self.canvas.create_line(x, y, x+1, y+1, fill=self.color_pen)
     return 0
 
 
-# ==========Окружности==========
+# ==========CIRCLES==========
 def draw_circle_canon(self, xc, yc, r):
     for x in range(0, r + 1, 1):
         y = round(sqrt(r ** 2 - x ** 2))
@@ -122,7 +123,7 @@ def draw_circle_std(self, xc, yc, r):
     return 0
 
 
-# ==========Эллипсы==========
+# ==========ELLIPSES==========
 def draw_ellipse_canon(self, xc, yc, a, b):
     for x in range(0, a + 1, 1):
         y = round(sqrt(1 - (x/a)**2) * b)

@@ -1,6 +1,8 @@
 from time import time
 from algorithms_test import *
 
+
+# Draws graphs of time efficiency of different algs
 def time_test(n):
     circles = []
 
