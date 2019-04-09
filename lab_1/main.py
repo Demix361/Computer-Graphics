@@ -5,8 +5,7 @@ from math import cos, sin, pi, sqrt, acos
 import copy
 
 
-# ==========FUNCTIONS==========
-
+# ==========MATH FUNCTIONS==========
 # Generates dots with parameters
 def dot_generator(x_beg, x_end, y_beg, y_end, amount):
     dots = []
@@ -61,11 +60,6 @@ def find_nearest(ctr_1, ctr_2):
     ind_2 = -1 # index in 2nd triples
     d_min_angle = 180
 
-    
-
-    
-    
-    #"""
     for i in range(len(ctr_1)):
         for j in range(len(ctr_2)):
             if ctr_1[i] != ctr_2[j]:
@@ -85,23 +79,6 @@ def find_nearest(ctr_1, ctr_2):
                     d_min_angle = d_cur_angle
                     ind_1 = i
                     ind_2 = j
-    #"""
-    """OLD
-    for i in range(len(ctr_1)):
-        for j in range(len(ctr_2)):
-            if ctr_1[i] != ctr_2[j]:
-                cur_dist = abs(ctr_1[i][1] - ctr_2[j][1])
-                    
-                if min_dist < 0:
-                    min_dist = cur_dist
-                    ind_1 = i
-                    ind_2 = j
-                elif cur_dist < min_dist:
-                    min_dist = cur_dist
-                    ind_1 = i
-                    ind_2 = j
-    """
-
 
     return ind_1, ind_2
 
@@ -144,7 +121,6 @@ def draw_pic(circle_1, circle_2, can, can_x, can_y, clr_1, clr_2):
     else:
         k = can_len_y / len_y
 
-    #'''
     # Масштабирование, центр масштабирования - центр изображения
     scale(new_circle_1, ox, oy, k)
     scale(new_circle_2, ox, oy, k)
@@ -158,54 +134,6 @@ def draw_pic(circle_1, circle_2, can, can_x, can_y, clr_1, clr_2):
     dy = oy - can_oy
     move(new_circle_1, dx, dy)
     move(new_circle_2, dx, dy)
-    #'''
-
-    # РИСОВАНИЕ в исходной системе координат
-    """
-    # Рисуем ось по середине соединяющего отрезка
-    axis_y = new_circle_1[2][1] + (new_circle_2[2][1] - new_circle_1[2][1]) / 2
-    axis_x = new_circle_1[2][0] + (new_circle_2[2][0] - new_circle_1[2][0]) / 2
-    can.create_line(0, axis_y, 800, axis_y, fill="lightgrey", arrow=LAST, arrowshape=(12, 15, 6))
-
-    # Рисуем угол
-    if new_circle_1[2][0] >= new_circle_2[2][0]:
-        cen_for_ang = new_circle_1[2]
-    else:
-        cen_for_ang = new_circle_2[2]
-    angle = acos(dist([axis_x, axis_y], [cen_for_ang[0], axis_y]) / dist([axis_x, axis_y], cen_for_ang))
-
-    if cen_for_ang[1] > axis_y:
-        d_angle = -angle * 180 / pi
-    else:
-        d_angle = angle * 180 / pi
-
-    if dist(new_circle_1[2], new_circle_2[2]) < 60:
-        angle_r = (dist(new_circle_1[2], new_circle_2[2]) - 5) / 2
-    else:
-        angle_r = 30
-
-    part_circle([axis_x, axis_y], angle_r, d_angle, can)
-    can.create_text(axis_x + 30, axis_y - 30, text="%.3f°" % abs(d_angle))
-
-    # Рисуем отрезок, соединяющий центры
-    can.create_line(new_circle_1[2][0], new_circle_1[2][1], new_circle_2[2][0], new_circle_2[2][1])
-    draw_dot([new_circle_1[2][0], new_circle_1[2][1]], "grey", can)
-    draw_dot([new_circle_2[2][0], new_circle_2[2][1]], "grey", can)
-
-    # Рисуем окружности
-    can.create_oval(new_circle_1[2][0] - r1, new_circle_1[2][1] - r1, new_circle_1[2][0] + r1, new_circle_1[2][1] + r1, outline=clr_1)
-    can.create_oval(new_circle_2[2][0] - r2, new_circle_2[2][1] - r2, new_circle_2[2][0] + r2, new_circle_2[2][1] + r2, outline=clr_2)
-
-    # Рисуем точки и их координаты
-    for i in range(len(circle_1[0])):
-        draw_dot(new_circle_1[0][i], "blue", can)
-        can.create_text(new_circle_1[0][i][0] + 10, new_circle_1[0][i][1] - 10,
-                        text="%s (%.3f, %.3f)" % (circle_1[1][i] + 1, circle_1[0][i][0], circle_1[0][i][1]))
-    for i in range(len(circle_2[0])):
-        draw_dot(new_circle_2[0][i], "red", can)
-        can.create_text(new_circle_2[0][i][0] + 10, new_circle_2[0][i][1] - 10,
-                        text="%s (%.3f, %.3f)" % (circle_2[1][i] + 1, circle_2[0][i][0], circle_2[0][i][1]))
-    """
 
     # РИСОВАНИЕ в декартовой системе координат
     # Рисуем ось по середине соединяющего отрезка
@@ -255,9 +183,6 @@ def draw_pic(circle_1, circle_2, can, can_x, can_y, clr_1, clr_2):
                         text="%s (%.3f, %.3f)" % (circle_2[1][i] + 1, circle_2[0][i][0], circle_2[0][i][1]))
 
 
-
-
-
 # ==========SECONDARY FUNCTIONS==========
 # Scales circle
 def scale(circle, ox, oy, k):
@@ -267,6 +192,7 @@ def scale(circle, ox, oy, k):
     circle[2][0] = (circle[2][0] - ox) * k + ox
     circle[2][1] = (circle[2][1] - oy) * k + oy
 
+
 # Moves circle
 def move(circle, dx, dy):
     for couple in circle[0]:
@@ -275,9 +201,11 @@ def move(circle, dx, dy):
     circle[2][0] -= dx
     circle[2][1] -= dy
 
+
 # Cos(angle in degrees)
 def d_cos(a):
     return cos(a * pi / 180)
+
 
 # Draws part of circle, inside two angles
 def part_circle(centre, r, angle, can):
@@ -301,29 +229,26 @@ def part_circle(centre, r, angle, can):
         can.create_line(centre[0] + old_coord[0], centre[1] + old_coord[1],
                         centre[0] + new_coord[0], centre[1] + new_coord[1])
 
+
 # Draws dot on x, y
 def draw_dot(a, color, can):
     can.create_oval(a[0] - 2, a[1] - 2, a[0] + 2, a[1] + 2, fill=color)
 
+
 # Finds distance between 2 points (a=[x0,y0], b=[x1,y1])
 def dist(a, b):
     return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** (1 / 2)
+
 
 # Prints warning message
 def mes(text):
     messagebox.showinfo("Внимание", text)
 
 
-def print_dots(dots_1, dots_2):
-    print(dots_1)
-    print(dots_2)
-
 # ==========GUI FUNCTIONS==========
+# Перестраивает сцену
 def build_scene(can, dots_1, dots_2):
     can.delete("all")
-
-    #dots_1 = dot_generator(-1000, 1000, -1000, 1000, 5)
-    #dots_2 = dot_generator(-1000, 1000, -1000, 1000, 5)
 
     if len(dots_1) < 3:
         mes("В первом множестве недостаточно точек")
@@ -360,6 +285,7 @@ def build_scene(can, dots_1, dots_2):
     color_2 = "red"
     draw_pic(circle_1, circle_2, can, 800, 800, color_1, color_2)
 
+
 # Добавление точки в массив и в listbox
 def add_dot(dots_1, dots_2, pl, x, y, lb1, lb2):
     try:
@@ -388,11 +314,13 @@ def add_dot(dots_1, dots_2, pl, x, y, lb1, lb2):
     dots.append([x, y])
     lb.insert(len(dots), lb_line(len(dots), dots[-1][0], dots[-1][1], 25))
 
+
 # Возвращает строку для записи в listbox
 def lb_line(i, x, y, n):
     x = "%.3f" % x
     y = "%.3f" % y
     return str(i) + " " * int((n - 1) / 2 - len(x)) + x + " " * int((n - 1) / 2 - len(y)) + y
+
 
 # Удаляет точку из массива и из listbox
 def delete(dots_1, dots_2, lb_1, lb_2):
@@ -415,6 +343,7 @@ def delete(dots_1, dots_2, lb_1, lb_2):
         lb.insert(ind + i + 1, lb_line(ind + i, dots[ind + i - 1][0], dots[ind + i - 1][1], 25))
     lb.delete(ind)
 
+
 # Удаляет все точки из выбранного множества или из обоих множеств
 def delete_all(dots_1, dots_2, lb_1, lb_2):
     if len(lb_1.curselection()) == 0 and len(lb_2.curselection()) == 0:
@@ -436,6 +365,7 @@ def delete_all(dots_1, dots_2, lb_1, lb_2):
     else:
         dots.clear()
         lb.delete(1, END)
+
 
 # Изменяет координаты выбранной точки
 def change(dots_1, dots_2, x, y, lb_1, lb_2):
@@ -470,8 +400,7 @@ def change(dots_1, dots_2, x, y, lb_1, lb_2):
     lb.insert(ind, lb_line(ind, dots[ind - 1][0], dots[ind - 1][1], 25))
 
 
-# ==========MAIN==========
-def main():
+if __name__ == "__main__":
     root = Tk()
     can_co = 800
     root.geometry(str(can_co + 320) + "x" + str(can_co))
@@ -480,8 +409,8 @@ def main():
     Font = "Arial 14"
     Can = Canvas(root, height=can_co, width=can_co, bg='white')
 
-    dots_1 = []#dot_generator(-1000, 1000, -1000, 1000, 5)
-    dots_2 = []#dot_generator(-1000, 1000, -1000, 1000, 5)
+    dots_1 = []
+    dots_2 = []
 
     # Frames
     WorkSpace = Frame(root)
@@ -574,6 +503,3 @@ def main():
     WorkSpace.rowconfigure(4, weight=1)
 
     root.mainloop()
-
-main()
-
