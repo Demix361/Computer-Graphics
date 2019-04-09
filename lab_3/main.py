@@ -1,5 +1,3 @@
-import os
-
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -10,9 +8,11 @@ from algorithms import *
 from testing import time_test, step_test
 import sys
 
-class mywindow(QMainWindow):
+
+# Main window class
+class MyWindow(QMainWindow):
     def __init__(self):
-        super(mywindow, self).__init__()
+        super(MyWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
@@ -98,12 +98,14 @@ class mywindow(QMainWindow):
     def clear(self):
         self.lines = []
 
+
     def get_color_line(self):
         tmp = QColorDialog.getColor()
 
         if tmp.isValid():
             tmp = tmp.getRgb()
             self.ui.pushButton_clr_line.setStyleSheet("background-color: rgb(%d, %d, %d)" % (tmp[0], tmp[1], tmp[2]))
+
 
     def get_color_bg(self):
         tmp = QColorDialog.getColor()
@@ -114,6 +116,7 @@ class mywindow(QMainWindow):
             for line in self.lines:
                 line[5] = tmp
 
+
     def start_test_time(self):
         try:
             length = float(self.ui.lineEdit_len.text())
@@ -121,6 +124,7 @@ class mywindow(QMainWindow):
             print("Неверные данные!")
             return -1
         time_test(length)
+
 
     def start_test_step(self):
         try:
@@ -133,6 +137,7 @@ class mywindow(QMainWindow):
         step_test(length, alg)
 
 
+# Canvas class
 class Canvas(QWidget):
     def __init__(self, parent):
         super().__init__()
@@ -141,7 +146,6 @@ class Canvas(QWidget):
 
     def initUi(self):
         self.show()
-
 
     def paintEvent(self, event):
         painter = QPainter()
@@ -159,6 +163,8 @@ class Canvas(QWidget):
         painter.end()
         self.update()
 
+
+# Draws lines on painter using different algs
 def drawline(painter, lines):
     if lines != []:
         for line in lines:
@@ -177,9 +183,10 @@ def drawline(painter, lines):
             if line[6] == 5:
                 drawline_std(painter,line[0],line[1],line[2],line[3])
 
+
 if __name__ == '__main__':
     app = QApplication([])
-    application = mywindow()
+    application = MyWindow()
     application.show()
 
     sys.exit(app.exec())
