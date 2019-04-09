@@ -103,13 +103,13 @@ class Kg5App(tk.Tk):
         self.work = ttk.Frame(self)
 
 
-        self.table = ttk.Treeview(self.work, columns=("X"))
+        self.table = ttk.Treeview(self.work, columns="X", height=10)
         self.table.heading("#0", text="X")
         self.table.heading("#1", text="Y")
         self.table.column("#0", width=150)
         self.table.column("#1", width=150)
 
-        self.table.grid(row=0, column=0)
+        self.table.grid(row=0, column=0, sticky="ns")
 
 
         self.add = ttk.LabelFrame(self.work, text="Добавить новое ребро")
@@ -133,7 +133,7 @@ class Kg5App(tk.Tk):
         self.button_end = ttk.Button(self.add, text="Закончить", command=lambda: click_end(self))
         self.button_end.grid(row=2, column=2, columnspan=2)
 
-        self.add.grid(row=1, column=0, sticky="ew")
+        self.add.grid(row=1, column=0, sticky="nsew")
         self.add.grid_columnconfigure(0, weight=1)
         self.add.grid_columnconfigure(1, weight=1)
         self.add.grid_columnconfigure(2, weight=1)
@@ -156,7 +156,7 @@ class Kg5App(tk.Tk):
         self.label_fill = tk.Label(self.color, bg=self.fill_color, width=10)
         self.label_fill.grid(row=1, column=1)
 
-        self.color.grid(row=2, column=0, sticky="ew")
+        self.color.grid(row=2, column=0, sticky="nsew")
         self.color.grid_columnconfigure(0, weight=1)
         self.color.grid_columnconfigure(1, weight=1)
 
@@ -182,12 +182,13 @@ class Kg5App(tk.Tk):
         self.delay_entry = ttk.Entry(self.options, width=10, textvariable=self.delay_str)
         self.delay_entry.grid(row=2, column=1)
 
-        self.options.grid(row=3, column=0, sticky="ew")
+        self.options.grid(row=3, column=0, sticky="nsew")
         self.options.grid_columnconfigure(0, weight=1)
         self.options.grid_columnconfigure(1, weight=1)
 
 
         self.work.pack(side=tk.RIGHT)
+
         self.canvas = tk.Canvas(self, bg=self.bg_color)
         tk.Tk.bind(self, "<KeyPress>", press_key)
         tk.Tk.bind(self, "<KeyRelease>", release_key)
@@ -274,6 +275,9 @@ def end(self):
     if len(self.figs[self.fig_n]) > 2:
         self.canvas.create_line(self.figs[self.fig_n][-1],
                                 self.figs[self.fig_n][0], fill=self.bd_color, tag="tag"+str(self.fig_n))
+
+        self.table_items[self.fig_n].append(self.table.insert("", "end", text="==========", values="=========="))
+
         self.fig_n += 1
 
         self.drawing = 0
