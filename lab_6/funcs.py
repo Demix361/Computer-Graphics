@@ -14,7 +14,7 @@ def get_edges(dots_mas):
     return edges
 
 
-# Добавляет границы вокруг карты пикселей
+# *Добавляет границы вокруг карты пикселей
 def borders_to_pixmap(self):
     for i in range(len(self.pixmap[0])):
         self.pixmap[0][i] = self.bd_color
@@ -60,6 +60,7 @@ def simple_seed_alg(self):
         return -1
 
     stack = []
+    to_draw = []
 
     stack.append((seed_x, seed_y))
 
@@ -76,6 +77,7 @@ def simple_seed_alg(self):
             print("error (%s, %s)" % (x, y))
 
         self.pixmap[y][x] = self.fill_color
+        to_draw.append((x, y))
 
         if self.pixmap[y][x+1] != self.bd_color and self.pixmap[y][x+1] != self.fill_color and x + 1 < max_x:
             stack.append((x+1, y))
@@ -85,6 +87,8 @@ def simple_seed_alg(self):
             stack.append((x-1, y))
         if self.pixmap[y-1][x] != self.bd_color and self.pixmap[y-1][x] != self.fill_color and y - 1 > min_y:
             stack.append((x, y-1))
+
+    return to_draw
 
 
 # Конвертирует карту пикселей в строчный формат
@@ -120,6 +124,29 @@ def change_pixmap_size(self):
             self.pixmap.pop()
 
 
+def draw_edges(self):
+    for edge in self.edges:
+        x1 = edge[0][0]
+        y1 = edge[0][1]
+        x2 = edge[1][0]
+        y2 = edge[1][1]
+
+        len_x = abs(int(x2) - int(x1))
+        len_y = abs(int(y2) - int(y1))
+
+        if len_x == 0 and len_y == 0:
+            self.img.put(self.bd_color, (x1, y1))
+            continue
+
+        n = max(len_x, len_y)
+
+        dx = ((x2 > x1) - (x2 < x1)) * len_x / n
+        dy = ((y2 > y1) - (y2 < y1)) * len_y / n
+
+        for i in range(n + 1):
+            self.img.put(self.bd_color, (int(x1), int(y1)))
+            x1 += dx
+            y1 += dy
 
 def empty_pixmap(self):
     pixmap = [[self.bg_color for i in range(self.canvas.winfo_width())] for j in range(self.canvas.winfo_height())]
@@ -141,13 +168,22 @@ def create_pixmap(self):
 
     return pixmap
 
+
 def draw_pixmap(self):
     color_string = pixmap_to_string(self.pixmap)
 
-    self.canvas.delete("tag0")
-    self.canvas.delete("tag1")
+    for i in range(self.fig_n):
+        self.canvas.delete("tag%s" % i)
 
     self.img.put(color_string, to=(0, 0, self.img.width(), self.img.height()))
+
+
+def draw_with_delay(self, to_draw):
+    pix = to_draw.pop(0)
+    self.img.put(self.fill_color, pix)
+
+    if len(to_draw) > 0:
+        self.process = self.canvas.after(self.delay, lambda: draw_with_delay(self, to_draw))
 
 
 # Печать карты пикселей

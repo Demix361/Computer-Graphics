@@ -247,31 +247,6 @@ class Kg5App(tk.Tk):
 
 # Calls functions for filling polygon
 def fill(self):
-    self.edges = get_edges(self.figs)
-    self.figs = []
-    self.fig_n = 0
-
-    if self.canvas.winfo_width() != len(self.pixmap[0]) or self.canvas.winfo_height() != len(self.pixmap):
-        change_pixmap_size(self)
-        self.img.configure(width=self.canvas.winfo_width(), height=self.canvas.winfo_height())
-        self.canvas.create_image((self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2), image=self.img,
-                                 state="normal")
-
-
-    #print("Canvas: %s x %s" % (self.canvas.winfo_width(), self.canvas.winfo_height()))
-    #print("Pixmap: %s x %s" % (len(self.pixmap[0]), len(self.pixmap)))
-
-    edges_to_pixmap(self)
-    simple_seed_alg(self)
-
-    draw_pixmap(self)
-
-
-    """
-    intersections = get_intersections(self.edges)
-
-    intersections.sort(key=itemgetter(1, 0))
-
     if int(self.delay_var.get()) == 1:
         try:
             self.delay = int(self.delay_str.get())
@@ -279,14 +254,36 @@ def fill(self):
             mes("Неверная задержка.")
             return -2
 
-        fill_delay(self, intersections)
+        delay_draw = True
     else:
-        fill_figure(self, intersections)
+        delay_draw = False
+
+    self.edges = get_edges(self.figs)
+
+
+    if self.canvas.winfo_width() != len(self.pixmap[0]) or self.canvas.winfo_height() != len(self.pixmap):
+        change_pixmap_size(self)
+        self.img.configure(width=self.canvas.winfo_width(), height=self.canvas.winfo_height())
+        self.canvas.create_image((self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2), image=self.img,
+                                 state="normal")
+
+    if delay_draw:
         draw_edges(self)
-    """
 
+    edges_to_pixmap(self)
 
+    to_draw = simple_seed_alg(self)
+    print(to_draw)
 
+    if delay_draw:
+        for i in range(self.fig_n):
+            self.canvas.delete("tag%s" % i)
+        draw_with_delay(self, to_draw)
+    else:
+        draw_pixmap(self)
+
+    self.figs = []
+    self.fig_n = 0
 
 
 def disable_buttons(arr):
