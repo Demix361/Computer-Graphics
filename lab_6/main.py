@@ -2,7 +2,6 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import messagebox
 from tkinter.colorchooser import askcolor
-from operator import itemgetter
 
 from funcs import *
 
@@ -78,7 +77,7 @@ class Kg5App(tk.Tk):
             self.in_canvas = 0
 
         def pick_seed():
-            disable_buttons(remove(self.button_mas, self.button_seed))
+            disable_buttons(copy_rem(self.button_mas, self.button_seed))
             self.canvas.bind("<Button-1>", click_seed)
             self.canvas.configure(cursor="crosshair")
 
@@ -87,7 +86,7 @@ class Kg5App(tk.Tk):
             self.seed_y.set(event.y)
             self.canvas.bind("<Button-1>", click_add)
             self.canvas.configure(cursor="")
-            enable_buttons(remove(self.button_mas, self.button_seed))
+            enable_buttons(copy_rem(self.button_mas, self.button_seed))
 
 
         options_size = 300  # const
@@ -110,8 +109,8 @@ class Kg5App(tk.Tk):
         self.edges = [] # Массив ребер
         self.process = None
         self.table_items = [] # Элементы таблицы
-        self.button_mas = []
-        self.seed = None
+        self.button_mas = [] # All buttons
+        self.seed = None # Seed coordinates
 
 
         self.work = ttk.Frame(self)
@@ -243,8 +242,6 @@ class Kg5App(tk.Tk):
         self.pixmap = empty_pixmap(self)
 
 
-
-
 # Calls functions for filling polygon
 def fill(self):
     if int(self.delay_var.get()) == 1:
@@ -286,11 +283,13 @@ def fill(self):
     self.fig_n = 0
 
 
+# Disables all buttons in arr
 def disable_buttons(arr):
     for button in arr:
         button.configure(state=tk.DISABLED)
 
 
+# Enables all buttons in arr
 def enable_buttons(arr):
     for button in arr:
         button.configure(state=tk.NORMAL)
@@ -343,7 +342,6 @@ def add(self, x, y):
                                 self.figs[self.fig_n][-2], fill=self.bd_color, tag="tag"+str(self.fig_n))
 
 
-
 # Connects last point with first
 def end(self):
     if len(self.figs[self.fig_n]) > 2:
@@ -385,7 +383,8 @@ def clear(self, obj):
             self.table.delete(item)
 
 
-def remove(arr, el):
+# Creates copy of arr without el
+def copy_rem(arr, el):
     new_arr = arr.copy()
     new_arr.remove(el)
 

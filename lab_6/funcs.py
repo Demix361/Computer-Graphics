@@ -1,5 +1,6 @@
 from main import mes
 
+
 # Returns edges from list of dots
 def get_edges(dots_mas):
     edges = []
@@ -14,17 +15,7 @@ def get_edges(dots_mas):
     return edges
 
 
-# *Добавляет границы вокруг карты пикселей
-def borders_to_pixmap(self):
-    for i in range(len(self.pixmap[0])):
-        self.pixmap[0][i] = self.bd_color
-        self.pixmap[-1][i] = self.bd_color
-    for i in range(len(self.pixmap)):
-        self.pixmap[i][0] = self.bd_color
-        self.pixmap[i][-1] = self.bd_color
-
-
-# Добавляет грани фигур на карту пикселей
+# Adds edges on pixmap
 def edges_to_pixmap(self):
     for edge in self.edges:
         x1 = edge[0][0]
@@ -50,7 +41,33 @@ def edges_to_pixmap(self):
             y1 += dy
 
 
-# Простой алгоритм с затравкой
+# Puts edges on image
+def draw_edges(self):
+    for edge in self.edges:
+        x1 = edge[0][0]
+        y1 = edge[0][1]
+        x2 = edge[1][0]
+        y2 = edge[1][1]
+
+        len_x = abs(int(x2) - int(x1))
+        len_y = abs(int(y2) - int(y1))
+
+        if len_x == 0 and len_y == 0:
+            self.img.put(self.bd_color, (x1, y1))
+            continue
+
+        n = max(len_x, len_y)
+
+        dx = ((x2 > x1) - (x2 < x1)) * len_x / n
+        dy = ((y2 > y1) - (y2 < y1)) * len_y / n
+
+        for i in range(n + 1):
+            self.img.put(self.bd_color, (int(x1), int(y1)))
+            x1 += dx
+            y1 += dy
+
+
+# Recolors pixmap and returns recolored pixels
 def simple_seed_alg(self):
     try:
         seed_x = int(self.seed_x.get())
@@ -91,7 +108,7 @@ def simple_seed_alg(self):
     return to_draw
 
 
-# Конвертирует карту пикселей в строчный формат
+# Converts pixmap to string
 def pixmap_to_string(matrix):
     color_string = ""
     h = len(matrix)
@@ -106,6 +123,7 @@ def pixmap_to_string(matrix):
     return color_string
 
 
+# Changes pixmap to the size of canvas
 def change_pixmap_size(self):
     dx = self.canvas.winfo_width() - len(self.pixmap[0])
     dy = self.canvas.winfo_height() - len(self.pixmap)
@@ -124,51 +142,14 @@ def change_pixmap_size(self):
             self.pixmap.pop()
 
 
-def draw_edges(self):
-    for edge in self.edges:
-        x1 = edge[0][0]
-        y1 = edge[0][1]
-        x2 = edge[1][0]
-        y2 = edge[1][1]
-
-        len_x = abs(int(x2) - int(x1))
-        len_y = abs(int(y2) - int(y1))
-
-        if len_x == 0 and len_y == 0:
-            self.img.put(self.bd_color, (x1, y1))
-            continue
-
-        n = max(len_x, len_y)
-
-        dx = ((x2 > x1) - (x2 < x1)) * len_x / n
-        dy = ((y2 > y1) - (y2 < y1)) * len_y / n
-
-        for i in range(n + 1):
-            self.img.put(self.bd_color, (int(x1), int(y1)))
-            x1 += dx
-            y1 += dy
-
+# Creates pixmap with bg color
 def empty_pixmap(self):
     pixmap = [[self.bg_color for i in range(self.canvas.winfo_width())] for j in range(self.canvas.winfo_height())]
 
     return pixmap
 
-def create_pixmap(self):
-    pixmap = []
-    h = self.canvas.winfo_height()
-    w = self.canvas.winfo_width()
 
-    for i in range(h):
-        pixmap.append([])
-        for j in range(w):
-            if j == 0 or j == w - 1 or i == 0 or i == h - 1:
-                pixmap[i].append("#000000")
-            else:
-                pixmap[i].append("#ffffff")
-
-    return pixmap
-
-
+# Puts pixmap on image
 def draw_pixmap(self):
     color_string = pixmap_to_string(self.pixmap)
 
@@ -178,6 +159,7 @@ def draw_pixmap(self):
     self.img.put(color_string, to=(0, 0, self.img.width(), self.img.height()))
 
 
+# Puts pixels with delay using array of pixels
 def draw_with_delay(self, to_draw):
     pix = to_draw.pop(0)
     self.img.put(self.fill_color, pix)
@@ -186,7 +168,7 @@ def draw_with_delay(self, to_draw):
         self.process = self.canvas.after(self.delay, lambda: draw_with_delay(self, to_draw))
 
 
-# Печать карты пикселей
+# Print pixmap
 def print_pixmap(pixmap):
     h = len(pixmap)
     w = len(pixmap[0])
@@ -195,4 +177,3 @@ def print_pixmap(pixmap):
         for j in range(w):
             print(pixmap[i][j], end=" ")
         print()
-
