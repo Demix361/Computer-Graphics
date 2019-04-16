@@ -67,6 +67,32 @@ def draw_edges(self):
             y1 += dy
 
 
+def br_int_line(self, xy1, xy2):
+    x1 = xy1[0]
+    y1 = xy1[1]
+    x2 = xy2[0]
+    y2 = xy2[1]
+
+    len_x = abs(int(x2) - int(x1))
+    len_y = abs(int(y2) - int(y1))
+
+    if len_x == 0 and len_y == 0:
+        self.img.put(self.bd_color, (x1, y1))
+        return -1
+
+    n = max(len_x, len_y)
+
+    dx = ((x2 > x1) - (x2 < x1)) * len_x / n
+    dy = ((y2 > y1) - (y2 < y1)) * len_y / n
+
+    for i in range(n + 1):
+        self.img.put(self.bd_color, (int(x1), int(y1)))
+        x1 += dx
+        y1 += dy
+
+    return 0
+
+
 # Recolors pixmap and returns recolored pixels
 def simple_seed_alg(self):
     try:
@@ -90,11 +116,10 @@ def simple_seed_alg(self):
         max_x = len(self.pixmap[0]) - 1
         min_y = 0
         max_y = len(self.pixmap) - 1
-        if x - 1 < 0 or x + 1 >= len(self.pixmap[0]) or y - 1 < 0 or y + 1 >= len(self.pixmap):
-            print("error (%s, %s)" % (x, y))
 
-        self.pixmap[y][x] = self.fill_color
-        to_draw.append((x, y))
+        if self.pixmap[y][x] != self.fill_color:
+            self.pixmap[y][x] = self.fill_color
+            to_draw.append((x, y))
 
         if self.pixmap[y][x+1] != self.bd_color and self.pixmap[y][x+1] != self.fill_color and x + 1 < max_x:
             stack.append((x+1, y))
@@ -161,11 +186,18 @@ def draw_pixmap(self):
 
 # Puts pixels with delay using array of pixels
 def draw_with_delay(self, to_draw):
-    pix = to_draw.pop(0)
-    self.img.put(self.fill_color, pix)
+    count = 10
 
-    if len(to_draw) > 0:
+    if len(to_draw) >= count:
+        for i in range(count):
+            pix = to_draw.pop(0)
+            self.img.put(self.fill_color, pix)
+
         self.process = self.canvas.after(self.delay, lambda: draw_with_delay(self, to_draw))
+    else:
+        for i in range(len(to_draw)):
+            pix = to_draw.pop(0)
+            self.img.put(self.fill_color, pix)
 
 
 # Print pixmap

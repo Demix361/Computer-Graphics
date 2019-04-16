@@ -88,6 +88,12 @@ class Kg5App(tk.Tk):
             self.canvas.configure(cursor="")
             enable_buttons(copy_rem(self.button_mas, self.button_seed))
 
+        def configure(event):
+            if not self.resizing:
+                self.resizing = True
+            
+
+
 
         options_size = 300  # const
         can_x = args[0] - options_size
@@ -111,6 +117,7 @@ class Kg5App(tk.Tk):
         self.table_items = [] # Элементы таблицы
         self.button_mas = [] # All buttons
         self.seed = None # Seed coordinates
+        self.resizing = False
 
 
         self.work = ttk.Frame(self)
@@ -231,6 +238,8 @@ class Kg5App(tk.Tk):
         tk.Tk.bind(self, "<KeyPress>", press_key)
         tk.Tk.bind(self, "<KeyRelease>", release_key)
         tk.Tk.bind(self, "<Motion>", in_window)
+        self.canvas.bind("<Configure>", configure)
+        tk.Tk.bind(self, "<ButtonRelease-1>", configure)
         self.canvas.bind("<Button-1>", click_add)
         self.canvas.bind("<Button-3>", click_end)
         self.canvas.bind("<Motion>", moving_line)
@@ -264,13 +273,9 @@ def fill(self):
         self.canvas.create_image((self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2), image=self.img,
                                  state="normal")
 
-    if delay_draw:
-        draw_edges(self)
-
     edges_to_pixmap(self)
 
     to_draw = simple_seed_alg(self)
-    print(to_draw)
 
     if delay_draw:
         for i in range(self.fig_n):
@@ -338,8 +343,9 @@ def add(self, x, y):
         self.drawing = 1
 
     if len(self.figs[self.fig_n]) > 1:
-        self.canvas.create_line(self.figs[self.fig_n][-1],
-                                self.figs[self.fig_n][-2], fill=self.bd_color, tag="tag"+str(self.fig_n))
+        #self.canvas.create_line(self.figs[self.fig_n][-1],
+        #                       self.figs[self.fig_n][-2], fill=self.bd_color, tag="tag"+str(self.fig_n))
+        br_int_line(self, self.figs[self.fig_n][-1], self.figs[self.fig_n][-2])
 
 
 # Connects last point with first
