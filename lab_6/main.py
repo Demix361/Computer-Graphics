@@ -22,6 +22,7 @@ class MyWindow(QMainWindow):
         self.can_w = 600
         self.can_h = 600
         self.seed = None
+        self.choosing_seed = False
         self.ctrl_pressed = False
         self.first_dot = None
         self.cur_figure = []
@@ -49,6 +50,7 @@ class MyWindow(QMainWindow):
         self.pushButton_seed.clicked.connect(lambda: get_seed(self))
         self.pushButton_add.clicked.connect(lambda: press_add_dot(self))
         self.pushButton_end.clicked.connect(lambda: end(self))
+        self.pushButton_clear.clicked.connect(lambda: clear(self))
 
         # Остальные настройки
         self.mainview.setMouseTracking(True)
@@ -106,7 +108,13 @@ class MyWindow(QMainWindow):
                 y -= borders[1]
 
                 if but == 1:
-                    if self.ctrl_pressed == 0 or len(self.cur_figure) == 0:
+                    if self.choosing_seed:
+                        self.seed = (x, y)
+                        QApplication.restoreOverrideCursor()
+                        self.choosing_seed = False
+                        self.lineEdit_seed_x.setText(str(x))
+                        self.lineEdit_seed_y.setText(str(y))
+                    elif self.ctrl_pressed == 0 or len(self.cur_figure) == 0:
                         add_dot(self, x, y)
                     else:
                         prev = self.cur_figure[-1]
@@ -118,7 +126,7 @@ class MyWindow(QMainWindow):
                             add_dot(self, prev[0], y)
                         else:
                             add_dot(self, x, prev[1])
-                            
+
                 elif but == 2:
                     end(self)
 
@@ -175,14 +183,13 @@ def get_color_fill(self):
 
 
 def get_seed(self):
-    try:
-        x = int(self.lineEdit_seed_x.text())
-        y = int(self.lineEdit_seed_y.text())
-    except ValueError:
-        mes("Неверные координаты затравки!")
-        return -1
+    QApplication.setOverrideCursor(Qt.CrossCursor)
+    self.choosing_seed = True
 
-    self.seed = (x, y)
+
+def clear(self):
+    self.scene.clear()
+    self.image.fill(self.bg_color)
 
 
 def mes(text):
