@@ -48,11 +48,11 @@ class MyWindow(QMainWindow):
         self.pushButton_fill_clr.clicked.connect(lambda: get_color_fill(self))
         self.pushButton_seed.clicked.connect(lambda: get_seed(self))
         self.pushButton_add.clicked.connect(lambda: press_add_dot(self))
+        self.pushButton_end.clicked.connect(lambda: end(self))
 
         # Остальные настройки
         self.mainview.setMouseTracking(True)
         self.mainview.viewport().installEventFilter(self)
-
         self.label_bd.setStyleSheet("background-color: rgb(%d, %d, %d)" % self.bd_color.getRgb()[:3])
         self.label_fill.setStyleSheet("background-color: rgb(%d, %d, %d)" % self.fill_color.getRgb()[:3])
 
@@ -63,9 +63,23 @@ class MyWindow(QMainWindow):
 
             if len(self.cur_figure) > 0:
                 prev = self.cur_figure[-1]
-                if self.follow_line:
-                    self.scene.removeItem(self.follow_line)
-                self.follow_line = self.scene.addLine(prev[0], prev[1], x, y, self.pen)
+                if self.ctrl_pressed:
+                    if self.follow_line:
+                        self.scene.removeItem(self.follow_line)
+
+                    dx = x - prev[0]
+                    dy = y - prev[1]
+
+                    if abs(dy) >= abs(dx):
+                        cur = (prev[0], y)
+                    else:
+                        cur = (x, prev[1])
+
+                    self.follow_line = self.scene.addLine(prev[0], prev[1], cur[0], cur[1], self.pen)
+                else:
+                    if self.follow_line:
+                        self.scene.removeItem(self.follow_line)
+                    self.follow_line = self.scene.addLine(prev[0], prev[1], x, y, self.pen)
 
         return QWidget.eventFilter(self, source, event)
 
@@ -92,11 +106,21 @@ class MyWindow(QMainWindow):
                 y -= borders[1]
 
                 if but == 1:
-                    add_dot(self, x, y)
+                    if self.ctrl_pressed == 0 or len(self.cur_figure) == 0:
+                        add_dot(self, x, y)
+                    else:
+                        prev = self.cur_figure[-1]
+
+                        dx = x - prev[0]
+                        dy = y - prev[1]
+
+                        if abs(dy) >= abs(dx):
+                            add_dot(self, prev[0], y)
+                        else:
+                            add_dot(self, x, prev[1])
+                            
                 elif but == 2:
                     end(self)
-
-
 
 
 def press_add_dot(self):
