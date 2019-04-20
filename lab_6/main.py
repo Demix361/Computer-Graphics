@@ -127,6 +127,7 @@ class MyWindow(QMainWindow):
                         self.choosing_seed = False
                         self.lineEdit_seed_x.setText(str(x))
                         self.lineEdit_seed_y.setText(str(y))
+                        enable_buttons(self.inputs)
                     elif self.ctrl_pressed == 0 or len(self.cur_figure) == 0:
                         add_dot(self, x, y)
                     else:
@@ -143,7 +144,7 @@ class MyWindow(QMainWindow):
                 elif but == 2:
                     end(self)
 
-    def paintEvent(self, e):
+    def paintEvent(self, event):
         self.scene.clear()
         self.pixmap.convertFromImage(self.image)
         self.scene.addPixmap(self.pixmap)
@@ -227,6 +228,7 @@ def get_color_fill(self):
 
 
 def get_seed(self):
+    disable_buttons(self.inputs)
     QApplication.setOverrideCursor(Qt.CrossCursor)
     self.choosing_seed = True
 
