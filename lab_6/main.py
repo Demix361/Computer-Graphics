@@ -34,6 +34,20 @@ class MyWindow(QMainWindow):
         self.pen = QPen()
         self.pen.setColor(self.bd_color)
         self.pixmap = QPixmap(self.can_w, self.can_h)
+        self.inputs = [
+            self.pushButton_bd_clr,
+            self.pushButton_fill_clr,
+            self.pushButton_seed,
+            self.pushButton_add,
+            self.pushButton_end,
+            self.pushButton_clear,
+            self.pushButton_fill,
+            self.lineEdit_x,
+            self.lineEdit_y,
+            self.lineEdit_seed_x,
+            self.lineEdit_seed_y,
+            self.checkBox
+        ]
 
         # Настройка полей ввода
         reg_ex = QRegExp("[0-9]+")
@@ -232,6 +246,23 @@ def mes(text):
     msg.setStandardButtons(QMessageBox.Ok)
 
     retval = msg.exec_()
+
+
+def disable_buttons(buttons):
+    for b in buttons:
+        b.setEnabled(False)
+
+
+def enable_buttons(buttons):
+    for b in buttons:
+        b.setEnabled(True)
+
+
+def without(array, element):
+    new_array = array.copy()
+    new_array.remove(element)
+
+    return new_array
 
 
 if __name__ == '__main__':
