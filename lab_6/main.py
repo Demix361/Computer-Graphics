@@ -3,9 +3,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5 import uic
 import sys
-from random import randint
 
-from funcs import create_line
+from funcs import create_line, fill_default, fill_delay
 
 
 class MyWindow(QMainWindow):
@@ -51,6 +50,7 @@ class MyWindow(QMainWindow):
         self.pushButton_add.clicked.connect(lambda: press_add_dot(self))
         self.pushButton_end.clicked.connect(lambda: end(self))
         self.pushButton_clear.clicked.connect(lambda: clear(self))
+        self.pushButton_fill.clicked.connect(lambda: fill(self))
 
         # Остальные настройки
         self.mainview.setMouseTracking(True)
@@ -109,7 +109,6 @@ class MyWindow(QMainWindow):
 
                 if but == 1:
                     if self.choosing_seed:
-                        self.seed = (x, y)
                         QApplication.restoreOverrideCursor()
                         self.choosing_seed = False
                         self.lineEdit_seed_x.setText(str(x))
@@ -131,6 +130,22 @@ class MyWindow(QMainWindow):
                     end(self)
 
 
+def fill(self):
+    try:
+        x = int(self.lineEdit_seed_x.text())
+        y = int(self.lineEdit_seed_y.text())
+    except ValueError:
+        mes("Неверные координаты затравки")
+        return -1
+
+    self.seed = (x, y)
+
+    fill_default(self)
+
+    self.pixmap.convertFromImage(self.image)
+    self.scene.addPixmap(self.pixmap)
+
+
 def press_add_dot(self):
     try:
         x = int(self.lineEdit_x.text())
@@ -139,8 +154,8 @@ def press_add_dot(self):
         mes("Неверные координаты точки")
         return -1
 
-    # ПРОВЕРКА НА ВХОЖДЕНИЕ В ОБЛАСТЬ
-    add_dot(self, x, y)
+    if x <= self.can_w and y <= self.can_h:
+        add_dot(self, x, y)
 
 
 def add_dot(self, x, y):

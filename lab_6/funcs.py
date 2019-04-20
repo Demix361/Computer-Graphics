@@ -1,5 +1,9 @@
-def draw_pix(self, x, y, color):
+def put_pix(self, x, y, color):
     self.image.setPixel(x, y, color.rgb())
+
+
+def get_pix(self, x, y):
+    return self.image.pixelColor(x, y)
 
 
 def sign(x):
@@ -19,7 +23,7 @@ def create_line(self, dot1, dot2):
     dy = y2 - y1
 
     if dx == 0 and dy == 0:
-        draw_pix(self, x1, y1, self.bd_color)
+        put_pix(self, x1, y1, self.bd_color)
         return 1
 
     sx = sign(dx)
@@ -39,7 +43,7 @@ def create_line(self, dot1, dot2):
     new_dy = dy * 2
 
     while x1 != x2 or y1 != y2:
-        draw_pix(self, x1, y1, self.bd_color)
+        put_pix(self, x1, y1, self.bd_color)
         if e >= 0:
             if change == 0:
                 y1 += sy
@@ -54,3 +58,58 @@ def create_line(self, dot1, dot2):
             e += new_dy
 
     return 0
+
+
+def fill_default(self):
+    stack = []
+    stack.append(self.seed)
+
+    while len(stack) > 0:
+        x, y = stack.pop()
+
+        x_temp = x
+        put_pix(self, x, y, self.fill_color)
+
+        x += 1
+        while get_pix(self, x, y) != self.bd_color:
+            put_pix(self, x, y, self.fill_color)
+            x += 1
+        x_right = x - 1
+
+        x = x_temp
+
+        x -= 1
+        while get_pix(self, x, y) != self.bd_color:
+            put_pix(self, x, y, self.fill_color)
+            x -= 1
+        x_left = x + 1
+
+        for i in range(1, -2, -2):
+            x = x_left
+            y += i
+            while x <= x_right:
+                flag = False
+
+                while get_pix(self, x, y) != self.bd_color and get_pix(self, x, y) != self.fill_color and x < x_right:
+                    if not flag:
+                        flag = True
+                    x += 1
+
+                if flag:
+                    if get_pix(self, x, y) != self.bd_color and get_pix(self, x, y) != self.fill_color and x == x_right:
+                        stack.append((x, y))
+                    else:
+                        stack.append((x - 1, y))
+                    flag = False
+
+                x_enter = x
+                while (get_pix(self, x, y) == self.bd_color or get_pix(self, x, y) == self.fill_color) and x < x_right:
+                    x += 1
+
+                if x == x_enter:
+                    x += 1
+            y -= i
+
+
+def fill_delay(self):
+    pass
