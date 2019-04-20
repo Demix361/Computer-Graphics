@@ -1,3 +1,6 @@
+from PyQt5.QtWidgets import QApplication
+
+
 def put_pix(self, x, y, color):
     self.image.setPixel(x, y, color.rgb())
 
@@ -60,6 +63,16 @@ def create_line(self, dot1, dot2):
     return 0
 
 
+def put_borders(self, color):
+    for i in range(self.can_w):
+        put_pix(self, i, 0, color)
+        put_pix(self, i, self.can_h - 1, color)
+
+    for i in range(self.can_h):
+        put_pix(self, 0, i, color)
+        put_pix(self, self.can_w - 1, i, color)
+
+
 def fill_default(self):
     stack = []
     stack.append(self.seed)
@@ -112,4 +125,55 @@ def fill_default(self):
 
 
 def fill_delay(self):
-    pass
+    stack = []
+    stack.append(self.seed)
+
+    while len(stack) > 0:
+        QApplication.processEvents()
+
+        x, y = stack.pop()
+
+        x_temp = x
+        put_pix(self, x, y, self.fill_color)
+
+        x += 1
+        while get_pix(self, x, y) != self.bd_color:
+            put_pix(self, x, y, self.fill_color)
+            x += 1
+        x_right = x - 1
+
+        x = x_temp
+
+        x -= 1
+        while get_pix(self, x, y) != self.bd_color:
+            put_pix(self, x, y, self.fill_color)
+            x -= 1
+        x_left = x + 1
+
+        self.repaint()
+
+        for i in range(1, -2, -2):
+            x = x_left
+            y += i
+            while x <= x_right:
+                flag = False
+
+                while get_pix(self, x, y) != self.bd_color and get_pix(self, x, y) != self.fill_color and x < x_right:
+                    if not flag:
+                        flag = True
+                    x += 1
+
+                if flag:
+                    if get_pix(self, x, y) != self.bd_color and get_pix(self, x, y) != self.fill_color and x == x_right:
+                        stack.append((x, y))
+                    else:
+                        stack.append((x - 1, y))
+                    flag = False
+
+                x_enter = x
+                while (get_pix(self, x, y) == self.bd_color or get_pix(self, x, y) == self.fill_color) and x < x_right:
+                    x += 1
+
+                if x == x_enter:
+                    x += 1
+            y -= i

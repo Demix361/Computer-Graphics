@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 from PyQt5 import uic
 import sys
 
-from funcs import create_line, fill_default, fill_delay
+from funcs import create_line, fill_default, fill_delay, put_borders
 
 
 class MyWindow(QMainWindow):
@@ -129,6 +129,11 @@ class MyWindow(QMainWindow):
                 elif but == 2:
                     end(self)
 
+    def paintEvent(self, e):
+        self.scene.clear()
+        self.pixmap.convertFromImage(self.image)
+        self.scene.addPixmap(self.pixmap)
+
 
 def fill(self):
     try:
@@ -140,10 +145,20 @@ def fill(self):
 
     self.seed = (x, y)
 
-    fill_default(self)
+    if self.checkBox.checkState() == 0:
+        put_borders(self, self.bd_color)
+        fill_default(self)
+        put_borders(self, self.bg_color)
 
-    self.pixmap.convertFromImage(self.image)
-    self.scene.addPixmap(self.pixmap)
+        self.pixmap.convertFromImage(self.image)
+        self.scene.addPixmap(self.pixmap)
+    else:
+        put_borders(self, self.bd_color)
+        fill_delay(self)
+        put_borders(self, self.bg_color)
+
+        self.pixmap.convertFromImage(self.image)
+        self.scene.addPixmap(self.pixmap)
 
 
 def press_add_dot(self):
