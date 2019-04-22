@@ -7,6 +7,7 @@ import sys
 from funcs import create_line, fill_default, fill_delay, put_borders
 
 
+# Класс главного окна
 class MyWindow(QMainWindow):
     def __init__(self):
         QWidget.__init__(self)
@@ -17,7 +18,7 @@ class MyWindow(QMainWindow):
         # Переменные
         self.bg_color = QColor(Qt.white)
         self.bd_color = QColor(Qt.black)
-        self.fill_color = QColor(Qt.red)
+        self.fill_color = QColor("#ff8263")
         self.can_w = 600
         self.can_h = 600
         self.seed = None
@@ -27,13 +28,15 @@ class MyWindow(QMainWindow):
         self.cur_figure = []
         self.follow_line = None
 
-        # Добавляем холст
+        # Добавляем полотно
         self.scene = QGraphicsScene(0, 0, self.can_w, self.can_h)
         self.mainview.setScene(self.scene)
         self.image = QImage(self.can_w, self.can_h, QImage.Format_ARGB32_Premultiplied)
         self.pen = QPen()
         self.pen.setColor(self.bd_color)
         self.pixmap = QPixmap(self.can_w, self.can_h)
+
+        # Элементы ввода в интерфейсе
         self.inputs = [
             self.pushButton_bd_clr,
             self.pushButton_fill_clr,
@@ -72,6 +75,7 @@ class MyWindow(QMainWindow):
         self.label_bd.setStyleSheet("background-color: rgb(%d, %d, %d)" % self.bd_color.getRgb()[:3])
         self.label_fill.setStyleSheet("background-color: rgb(%d, %d, %d)" % self.fill_color.getRgb()[:3])
 
+    # Отслеживание передвижения мыши
     def eventFilter(self, source, event):
         if event.type() == QEvent.MouseMove and source is self.mainview.viewport():
             x = event.x()
@@ -79,6 +83,7 @@ class MyWindow(QMainWindow):
 
             if len(self.cur_figure) > 0:
                 prev = self.cur_figure[-1]
+
                 if self.ctrl_pressed:
                     if self.follow_line:
                         self.scene.removeItem(self.follow_line)
@@ -95,20 +100,24 @@ class MyWindow(QMainWindow):
                 else:
                     if self.follow_line:
                         self.scene.removeItem(self.follow_line)
+
                     self.follow_line = self.scene.addLine(prev[0], prev[1], x, y, self.pen)
 
         return QWidget.eventFilter(self, source, event)
 
+    # Нажатие клавиши
     def keyPressEvent(self, event):
         key = event.key()
         if key == Qt.Key_Control:
             self.ctrl_pressed = True
 
+    # Отжатие клавиши
     def keyReleaseEvent(self, event):
         key = event.key()
         if key == Qt.Key_Control:
             self.ctrl_pressed = False
 
+    # Нажатие кнопки мыши
     def mousePressEvent(self, event):
         but = event.button()
 
@@ -123,13 +132,16 @@ class MyWindow(QMainWindow):
 
                 if but == 1:
                     if self.choosing_seed:
-                        QApplication.restoreOverrideCursor()
-                        self.choosing_seed = False
                         self.lineEdit_seed_x.setText(str(x))
                         self.lineEdit_seed_y.setText(str(y))
+
+                        QApplication.restoreOverrideCursor()
+                        self.choosing_seed = False
                         enable_buttons(self.inputs)
+
                     elif self.ctrl_pressed == 0 or len(self.cur_figure) == 0:
                         add_dot(self, x, y)
+
                     else:
                         prev = self.cur_figure[-1]
 
@@ -144,12 +156,13 @@ class MyWindow(QMainWindow):
                 elif but == 2:
                     end(self)
 
+    # pixmap на сцену (для закраски с задержкой)
     def paintEvent(self, event):
         self.scene.clear()
-        self.pixmap.convertFromImage(self.image)
-        self.scene.addPixmap(self.pixmap)
+        add_pixmap(self)
 
 
+# Закрашивает область с задержкой или без
 def fill(self):
     try:
         x = int(self.lineEdit_seed_x.text())
@@ -158,24 +171,24 @@ def fill(self):
         mes("Неверные координаты затравки")
         return -1
 
+    if not 0 < x < self.can_w - 1 or not 0 < y < self.can_h - 1:
+        mes("Неверные координаты затравки")
+        return -2
+
     self.seed = (x, y)
 
+    put_borders(self, self.bd_color)
+
     if self.checkBox.checkState() == 0:
-        put_borders(self, self.bd_color)
         fill_default(self)
-        put_borders(self, self.bg_color)
-
-        self.pixmap.convertFromImage(self.image)
-        self.scene.addPixmap(self.pixmap)
     else:
-        put_borders(self, self.bd_color)
         fill_delay(self)
-        put_borders(self, self.bg_color)
 
-        self.pixmap.convertFromImage(self.image)
-        self.scene.addPixmap(self.pixmap)
+    put_borders(self, self.bg_color)
+    add_pixmap(self)
 
 
+# Получает данные и вызывает add_dot
 def press_add_dot(self):
     try:
         x = int(self.lineEdit_x.text())
@@ -188,28 +201,36 @@ def press_add_dot(self):
         add_dot(self, x, y)
 
 
+# Добавляет точку в список и рисует отрезок
 def add_dot(self, x, y):
-    self.cur_figure.append((x, y))
+    if 0 <= x < self.can_w and 0 <= y < self.can_h:
+        self.cur_figure.append((x, y))
 
-    if len(self.cur_figure) > 1:
-        create_line(self, self.cur_figure[-2], self.cur_figure[-1])
+        if len(self.cur_figure) > 1:
+            create_line(self, self.cur_figure[-2], self.cur_figure[-1])
 
-    self.pixmap.convertFromImage(self.image)
-    self.scene.addPixmap(self.pixmap)
-    self.scene.removeItem(self.follow_line)
+        add_pixmap(self)
+        self.scene.removeItem(self.follow_line)
 
 
+# Соединяет последнюю точку с первой
 def end(self):
     if len(self.cur_figure) > 2:
         create_line(self, self.cur_figure[-1], self.cur_figure[0])
 
         self.cur_figure.clear()
 
-        self.pixmap.convertFromImage(self.image)
-        self.scene.addPixmap(self.pixmap)
+        add_pixmap(self)
         self.scene.removeItem(self.follow_line)
 
 
+# Создает pixmap из image, привязывает pixmap к сцене
+def add_pixmap(self):
+    self.pixmap.convertFromImage(self.image)
+    self.scene.addPixmap(self.pixmap)
+
+
+# Цвет границы
 def get_color_bd(self):
     color = QColorDialog.getColor()
 
@@ -219,6 +240,7 @@ def get_color_bd(self):
         self.pen.setColor(self.bd_color)
 
 
+# Цвет закраски
 def get_color_fill(self):
     color = QColorDialog.getColor()
 
@@ -227,17 +249,20 @@ def get_color_fill(self):
         self.fill_color = color
 
 
+# Устанавливает переменную получения затравки
 def get_seed(self):
     disable_buttons(self.inputs)
     QApplication.setOverrideCursor(Qt.CrossCursor)
     self.choosing_seed = True
 
 
+# Очищает полотно
 def clear(self):
     self.scene.clear()
     self.image.fill(self.bg_color)
 
 
+# Выводит окно с предупреждением
 def mes(text):
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Warning)
@@ -250,16 +275,19 @@ def mes(text):
     retval = msg.exec_()
 
 
+# Отключает кнопки, переданные в списке
 def disable_buttons(buttons):
     for b in buttons:
         b.setEnabled(False)
 
 
+# Включает кнопки, переданные в списке
 def enable_buttons(buttons):
     for b in buttons:
         b.setEnabled(True)
 
 
+# Возвращает список без заданного элемента
 def without(array, element):
     new_array = array.copy()
     new_array.remove(element)

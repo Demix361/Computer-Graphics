@@ -1,23 +1,17 @@
 from PyQt5.QtWidgets import QApplication
 
 
+# Закрашивает пиксель цветом
 def put_pix(self, x, y, color):
     self.image.setPixel(x, y, color.rgb())
 
 
+# Возвращает цвет пикселя
 def get_pix(self, x, y):
     return self.image.pixelColor(x, y)
 
 
-def sign(x):
-    if x > 0:
-        return 1
-    elif x < 0:
-        return -1
-    else:
-        return 0
-
-
+# Рисует линию целочисленным Брезенхемомом
 def create_line(self, dot1, dot2):
     x1, y1 = dot1
     x2, y2 = dot2
@@ -63,6 +57,17 @@ def create_line(self, dot1, dot2):
     return 0
 
 
+# Оценка знака числа
+def sign(x):
+    if x > 0:
+        return 1
+    elif x < 0:
+        return -1
+    else:
+        return 0
+
+
+# Рисует границы вокруг полотна указанным цветом
 def put_borders(self, color):
     for i in range(self.can_w):
         put_pix(self, i, 0, color)
@@ -73,6 +78,7 @@ def put_borders(self, color):
         put_pix(self, self.can_w - 1, i, color)
 
 
+# Построчная закраска с затравкой
 def fill_default(self):
     stack = []
     stack.append(self.seed)
@@ -124,6 +130,7 @@ def fill_default(self):
             y -= i
 
 
+# Построчная закраска с затравкой с задержкой
 def fill_delay(self):
     stack = []
     stack.append(self.seed)
