@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QApplication
+from math import sqrt
 
 
 # Закрашивает пиксель цветом
@@ -67,6 +68,27 @@ def sign(x):
         return 0
 
 
+# Рисует окружность каноническим методом
+def create_circle(self, centre, r):
+    xc, yc = centre
+
+    for x in range(0, r + 1, 1):
+        y = round(sqrt(r ** 2 - x ** 2))
+
+        put_pix(self, xc + x, yc + y, self.bd_color)
+        put_pix(self, xc + x, yc - y, self.bd_color)
+        put_pix(self, xc - x, yc + y, self.bd_color)
+        put_pix(self, xc - x, yc - y, self.bd_color)
+
+    for y in range(0, r + 1, 1):
+        x = round(sqrt(r ** 2 - y ** 2))
+
+        put_pix(self, xc + x, yc + y, self.bd_color)
+        put_pix(self, xc + x, yc - y, self.bd_color)
+        put_pix(self, xc - x, yc + y, self.bd_color)
+        put_pix(self, xc - x, yc - y, self.bd_color)
+
+
 # Рисует границы вокруг полотна указанным цветом
 def put_borders(self, color):
     for i in range(self.can_w):
@@ -119,7 +141,6 @@ def fill_default(self):
                         stack.append((x, y))
                     else:
                         stack.append((x - 1, y))
-                    flag = False
 
                 x_enter = x
                 while (get_pix(self, x, y) == self.bd_color or get_pix(self, x, y) == self.fill_color) and x < x_right:

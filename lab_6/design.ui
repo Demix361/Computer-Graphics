@@ -85,9 +85,16 @@
        <item>
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
-          <string>Новая точка</string>
+          <string>Построение фигур</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
+          <item row="1" column="3">
+           <widget class="QPushButton" name="pushButton_end">
+            <property name="text">
+             <string>Закончить</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="2">
            <widget class="QLabel" name="label_2">
             <property name="text">
@@ -95,8 +102,12 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="3">
-           <widget class="QLineEdit" name="lineEdit_y"/>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="pushButton_add">
+            <property name="text">
+             <string>Добавить точку</string>
+            </property>
+           </widget>
           </item>
           <item row="0" column="1">
            <widget class="QLineEdit" name="lineEdit_x"/>
@@ -108,17 +119,13 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="pushButton_add">
-            <property name="text">
-             <string>Добавить</string>
-            </property>
-           </widget>
+          <item row="0" column="3">
+           <widget class="QLineEdit" name="lineEdit_y"/>
           </item>
-          <item row="1" column="3">
-           <widget class="QPushButton" name="pushButton_end">
+          <item row="2" column="1">
+           <widget class="QPushButton" name="pushButton_circle">
             <property name="text">
-             <string>Закончить</string>
+             <string>Добавить окружность</string>
             </property>
            </widget>
           </item>

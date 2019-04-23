@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 from PyQt5 import uic
 import sys
 
-from funcs import create_line, fill_default, fill_delay, put_borders
+from funcs import create_line, fill_default, fill_delay, put_borders, create_circle
 
 
 # Класс главного окна
@@ -27,6 +27,9 @@ class MyWindow(QMainWindow):
         self.first_dot = None
         self.cur_figure = []
         self.follow_line = None
+        self.drawing_circle = False
+        self.circle = None
+        self.follow_circle = None
 
         # Добавляем полотно
         self.scene = QGraphicsScene(0, 0, self.can_w, self.can_h)
@@ -68,6 +71,7 @@ class MyWindow(QMainWindow):
         self.pushButton_end.clicked.connect(lambda: end(self))
         self.pushButton_clear.clicked.connect(lambda: clear(self))
         self.pushButton_fill.clicked.connect(lambda: fill(self))
+        self.pushButton_circle.clicked.connect(lambda: add_circle(self))
 
         # Остальные настройки
         self.mainview.setMouseTracking(True)
@@ -103,6 +107,15 @@ class MyWindow(QMainWindow):
 
                     self.follow_line = self.scene.addLine(prev[0], prev[1], x, y, self.pen)
 
+            if self.drawing_circle:
+                if self.circle:
+                    xc, yc = self.circle
+
+                    if self.follow_circle:
+                        self.scene.removeItem(self.follow_circle)
+                    r = (abs(x - xc)**2 + abs(y - yc)**2)**0.5
+                    self.follow_circle = self.scene.addEllipse(xc - r, yc - r, 2 * r, 2 * r, self.pen)
+
         return QWidget.eventFilter(self, source, event)
 
     # Нажатие клавиши
@@ -131,6 +144,7 @@ class MyWindow(QMainWindow):
                 y -= borders[1]
 
                 if but == 1:
+                    # Затравка
                     if self.choosing_seed:
                         self.lineEdit_seed_x.setText(str(x))
                         self.lineEdit_seed_y.setText(str(y))
@@ -139,9 +153,27 @@ class MyWindow(QMainWindow):
                         self.choosing_seed = False
                         enable_buttons(self.inputs)
 
+                    # Окружность
+                    elif self.drawing_circle:
+                        if not self.circle:
+                            self.circle = (x, y)
+                        else:
+                            r = round((abs(self.circle[0] - x)**2 + abs(self.circle[1] - y)**2)**0.5)
+                            create_circle(self, self.circle, r)
+
+                            self.drawing_circle = False
+                            self.circle = None
+
+                            add_pixmap(self)
+                            self.scene.removeItem(self.follow_circle)
+
+                            enable_buttons(self.inputs)
+
+                    # Обычный отрезок
                     elif self.ctrl_pressed == 0 or len(self.cur_figure) == 0:
                         add_dot(self, x, y)
 
+                    # Отрезок под прямым углом
                     else:
                         prev = self.cur_figure[-1]
 
@@ -222,6 +254,12 @@ def end(self):
 
         add_pixmap(self)
         self.scene.removeItem(self.follow_line)
+
+
+# Устанавливает переменную рисования окружности
+def add_circle(self):
+    self.drawing_circle = True
+    disable_buttons(self.inputs)
 
 
 # Создает pixmap из image, привязывает pixmap к сцене
