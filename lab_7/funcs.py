@@ -47,3 +47,47 @@ def del_cutter(self):
     if self.cutter:
         self.scene.removeItem(self.cutter.scene_item)
     self.cutter = None
+
+
+def line_on_screen(self, x, y):
+    if self.ctrl_pressed == 0 or len(self.cur_line) == 0:
+        self.cur_line.append((x, y))
+
+    else:
+        prev = self.cur_line[0]
+
+        dx = x - prev[0]
+        dy = y - prev[1]
+
+        if abs(dy) >= abs(dx):
+            self.cur_line.append((prev[0], y))
+        else:
+            self.cur_line.append((x, prev[1]))
+
+    if len(self.cur_line) == 2:
+        c1, c2 = self.cur_line
+        add_line(self, c1[0], c1[1], c2[0], c2[1], self.line_color)
+        self.cur_line.clear()
+        self.scene.removeItem(self.follow_line)
+
+
+def following_line(self, x, y):
+    if len(self.cur_line) == 1:
+        prev = self.cur_line[0]
+        self.pen.setColor(self.line_color)
+
+        if self.follow_line:
+            self.scene.removeItem(self.follow_line)
+
+        if self.ctrl_pressed:
+            dx = x - prev[0]
+            dy = y - prev[1]
+
+            if abs(dy) >= abs(dx):
+                cur = (prev[0], y)
+            else:
+                cur = (x, prev[1])
+
+            self.follow_line = self.scene.addLine(prev[0], prev[1], cur[0], cur[1], self.pen)
+        else:
+            self.follow_line = self.scene.addLine(prev[0], prev[1], x, y, self.pen)

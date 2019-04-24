@@ -27,6 +27,7 @@ class MyWindow(QMainWindow):
 
         self.cutter = None
         self.lines = []
+        self.cur_line = []
 
         # Добавляем полотно
         self.scene = QGraphicsScene(0, 0, self.can_w, self.can_h)
@@ -81,6 +82,8 @@ class MyWindow(QMainWindow):
             x = event.x()
             y = event.y()
 
+            following_line(self, x, y)
+
         return QWidget.eventFilter(self, source, event)
 
     # Нажатие клавиши
@@ -98,6 +101,17 @@ class MyWindow(QMainWindow):
     # Нажатие кнопки мыши
     def mousePressEvent(self, event):
         but = event.button()
+        x = event.x()
+        y = event.y()
+        borders = self.mainview.geometry().getCoords()
+        if borders[0] <= x < borders[2] and borders[1] <= y < borders[3]:
+            x -= borders[0]
+            y -= borders[1]
+        else:
+            return -1
+
+        if but == 1:
+            line_on_screen(self, x, y)
 
 
 def get_line(self):
@@ -140,6 +154,8 @@ def clear(self):
 
     self.lines.clear()
     self.cutter = None
+    self.cur_line.clear()
+    self.follow_line = None
 
 
 if __name__ == '__main__':
