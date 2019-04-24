@@ -25,12 +25,14 @@ class MyWindow(QMainWindow):
         self.ctrl_pressed = False
         self.follow_line = None
 
+        self.cutter = None
+        self.lines = []
+
         # Добавляем полотно
         self.scene = QGraphicsScene(0, 0, self.can_w, self.can_h)
         self.mainview.setScene(self.scene)
         self.image = QImage(self.can_w, self.can_h, QImage.Format_ARGB32_Premultiplied)
         self.pen = QPen()
-        #self.pen.setColor(self.bd_color)
         self.pixmap = QPixmap(self.can_w, self.can_h)
 
         # Элементы ввода в интерфейсе
@@ -63,8 +65,8 @@ class MyWindow(QMainWindow):
         self.inp_y_down.setValidator(int_validator)
 
         # Привязка кнопок
-        self.but_add_line.clicked.connect(lambda: add_line(self))
-        self.but_add_cutter.clicked.connect(lambda: add_cutter(self))
+        self.but_add_line.clicked.connect(lambda: get_line(self))
+        self.but_add_cutter.clicked.connect(lambda: get_cutter(self))
         self.but_choose_cutter.clicked.connect(lambda: choose_cutter(self))
         self.but_cut.clicked.connect(lambda: cut(self))
         self.but_clear.clicked.connect(lambda: clear(self))
@@ -98,12 +100,31 @@ class MyWindow(QMainWindow):
         but = event.button()
 
 
-def add_line(self):
-    pass
+def get_line(self):
+    try:
+        x1 = int(self.inp_x1.text())
+        y1 = int(self.inp_y1.text())
+        x2 = int(self.inp_x2.text())
+        y2 = int(self.inp_y2.text())
+    except ValueError:
+        mes("Неверные данные отрезка")
+        return -1
+
+    add_line(self, x1, y1, x2, y2, self.line_color)
 
 
-def add_cutter(self):
-    pass
+def get_cutter(self):
+    try:
+        x_left = int(self.inp_x_left.text())
+        y_up = int(self.inp_y_up.text())
+        x_right = int(self.inp_x_right.text())
+        y_down = int(self.inp_y_down.text())
+    except ValueError:
+        mes("Неверные данные отрезка")
+        return -1
+
+    del_cutter(self)
+    add_cutter(self, x_left, y_up, x_right, y_down, self.cutter_color)
 
 
 def choose_cutter(self):
@@ -115,7 +136,10 @@ def cut(self):
 
 
 def clear(self):
-    pass
+    self.scene.clear()
+
+    self.lines.clear()
+    self.cutter = None
 
 
 if __name__ == '__main__':

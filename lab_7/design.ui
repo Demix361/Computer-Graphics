@@ -236,6 +236,22 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>inp_x1</tabstop>
+  <tabstop>inp_y1</tabstop>
+  <tabstop>inp_x2</tabstop>
+  <tabstop>inp_y2</tabstop>
+  <tabstop>but_add_line</tabstop>
+  <tabstop>inp_x_left</tabstop>
+  <tabstop>inp_y_up</tabstop>
+  <tabstop>inp_x_right</tabstop>
+  <tabstop>inp_y_down</tabstop>
+  <tabstop>but_add_cutter</tabstop>
+  <tabstop>but_choose_cutter</tabstop>
+  <tabstop>but_cut</tabstop>
+  <tabstop>but_clear</tabstop>
+  <tabstop>mainview</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
