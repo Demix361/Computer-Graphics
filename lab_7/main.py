@@ -153,7 +153,8 @@ def choose_cutter(self):
 
 
 def cut(self):
-    pass
+    for i in range(len(self.lines)):
+        simple_cut(self, self.lines[i])
 
 
 def clear(self):
