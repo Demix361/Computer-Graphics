@@ -22,12 +22,16 @@ class MyWindow(QMainWindow):
         self.cut_line_color = QColor(Qt.blue)
         self.can_w = 600
         self.can_h = 600
+
         self.ctrl_pressed = False
+        self.lines = []
+        self.cur_line = []
         self.follow_line = None
 
         self.cutter = None
-        self.lines = []
-        self.cur_line = []
+        self.drawing_cutter = False
+        self.cur_cutter = []
+        self.follow_cutter = None
 
         # Добавляем полотно
         self.scene = QGraphicsScene(0, 0, self.can_w, self.can_h)
@@ -83,6 +87,7 @@ class MyWindow(QMainWindow):
             y = event.y()
 
             following_line(self, x, y)
+            following_cutter(self, x, y)
 
         return QWidget.eventFilter(self, source, event)
 
@@ -108,10 +113,11 @@ class MyWindow(QMainWindow):
             x -= borders[0]
             y -= borders[1]
         else:
-            return -1
+            return
 
         if but == 1:
             line_on_screen(self, x, y)
+            cutter_on_screen(self, x, y)
 
 
 def get_line(self):
@@ -142,7 +148,8 @@ def get_cutter(self):
 
 
 def choose_cutter(self):
-    pass
+    del_cutter(self)
+    self.drawing_cutter = True
 
 
 def cut(self):
@@ -153,9 +160,13 @@ def clear(self):
     self.scene.clear()
 
     self.lines.clear()
-    self.cutter = None
     self.cur_line.clear()
     self.follow_line = None
+
+    self.cutter = None
+    self.cur_cutter.clear()
+    self.follow_cutter = None
+    self.drawing_cutter = False
 
 
 if __name__ == '__main__':
