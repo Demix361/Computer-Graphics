@@ -23,27 +23,33 @@ def simple_cut(line, cutter):
     r1 = deepcopy(p1)
     r2 = deepcopy(p2)
 
+    # Отрезок полностью внутри отсекателя
     if s1 == 0 and s2 == 0:
-        return B_shtrih(fl, r1, r2)
+        return return_flag(fl, r1, r2)
 
     p = get_p(t1, t2)
-    if p != 0:
-        return B(r1, r2)
 
+    # Отрезок тривиально невидим - лежит по одну сторону от отсекателя
+    if p != 0:
+        return return_flag(False, r1, r2)
+
+    # Только первая точка внутри отсекателя
     if s1 == 0:
         r1 = deepcopy(p1)
         q = deepcopy(p2)
         i = 2
-        return A(fl, i, q, p1, p2, r1, r2, xl, xr, yd, yu, False)
+        return A(fl, i, q, p1, p2, r1, r2, cutter, False)
 
+    # Только вторая точка внутри отсекателя
     if s2 == 0:
         r1 = deepcopy(p2)
         q = deepcopy(p1)
         i = 2
-        return A(fl, i, q, p1, p2, r1, r2, xl, xr, yd, yu, False)
+        return A(fl, i, q, p1, p2, r1, r2, cutter, False)
 
+    # Обе точки вне отсекателя
     i = 0
-    return A(fl, i, q, p1, p2, r1, r2, xl, xr, yd, yu)
+    return A(fl, i, q, p1, p2, r1, r2, cutter, True)
 
 
 def get_t(p, cutter):
@@ -71,24 +77,19 @@ def get_p(t1, t2):
 
     return p
 
-# =============================================================================
 
-
-
-def B_shtrih(flag, p1, p2):
+def return_flag(flag, p1, p2):
     if flag == 0:
         return True, p1, p2
     else:
         return False, p1, p2
 
-
-def B(p1, p2):
-    return B_shtrih(1, p1, p2)
+# =============================================================================
 
 
-def A_skip_1(FL, i, Q, p1, p2, r1, r2, xl, xr, yd, yu, m):
+def A_skip_1(FL, i, Q, p1, p2, r1, r2, cutter, m):
     if m == 0:
-        return B(r1, r2)
+        return return_flag(False, r1, r2)
 
     if Q[1] < yd:
         x = (yd - Q[1]) / m + Q[0]
@@ -100,7 +101,7 @@ def A_skip_1(FL, i, Q, p1, p2, r1, r2, xl, xr, yd, yu, m):
             else:
                 r2[0] = x
                 r2[1] = yd
-            return A(FL, i, Q, p1, p2, r1, r2, xl, xr, yd, yu)
+            return A(FL, i, Q, p1, p2, r1, r2, cutter, True)
 
     if Q[1] > yu:
         x = (yu - Q[1]) / m + Q[0]
@@ -112,46 +113,46 @@ def A_skip_1(FL, i, Q, p1, p2, r1, r2, xl, xr, yd, yu, m):
             else:
                 r2[0] = x
                 r2[1] = yu
-            return A(FL, i, Q, p1, p2, r1, r2, xl, xr, yd, yu)
+            return A(FL, i, Q, p1, p2, r1, r2, cutter, True)
 
-    return B(r1, r2)
+    return return_flag(False, r1, r2)
 
 
-def A(FL, i, Q, p1, p2, r1, r2, xl, xr, yd, yu, flag=True):
+def A(FL, i, Q, p1, p2, r1, r2, cutter, flag):
     if flag:
         i += 1
         if i > 2:
-            return B_shtrih(FL, r1, r2)
+            return return_flag(FL, r1, r2)
 
         Q = p1 if i == 1 else p2
 
     if p1[0] == p2[0]:
-        return A_skip_1(FL, i, Q, p1, p2, r1, r2, xl, xr, yd, yu, 99999)
+        return A_skip_1(FL, i, Q, p1, p2, r1, r2, cutter, 99999)
 
     m = (p2[1] - p1[1]) / (p2[0] - p1[0])
 
     if Q[0] < xl:
         y = m * (xl - Q[0]) + Q[1]
 
-        if yd <= y and y <= yu:
+        if yd <= y <= yu:
             if i == 1:
                 r1[0] = xl
                 r1[1] = y
             else:
                 r2[0] = xl
                 r2[1] = y
-            return A(FL, i, Q, p1, p2, r1, r2, xl, xr, yd, yu)
+            return A(FL, i, Q, p1, p2, r1, r2, cutter, True)
 
     if Q[0] > xr:
         y = m * (xr - Q[0]) + Q[1]
 
-        if yd <= y and y <= yu:
+        if yd <= y <= yu:
             if i == 1:
                 r1[0] = xr
                 r1[1] = y
             else:
                 r2[0] = xr
                 r2[1] = y
-            return A(FL, i, Q, p1, p2, r1, r2, xl, xr, yd, yu)
+            return A(FL, i, Q, p1, p2, r1, r2, cutter, True)
 
-    return A_skip_1(FL, i, Q, p1, p2, r1, r2, xl, xr, yd, yu, m)
+    return A_skip_1(FL, i, Q, p1, p2, r1, r2, cutter, m)

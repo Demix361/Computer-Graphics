@@ -5,7 +5,7 @@ from PyQt5 import uic
 import sys
 
 from funcs import *
-from simple_cut import simple_cut
+from simple_cut_v2 import simple_cut
 
 # Класс главного окна
 class MyWindow(QMainWindow):
