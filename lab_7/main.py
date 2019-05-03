@@ -21,8 +21,6 @@ class MyWindow(QMainWindow):
         self.line_color = QColor(Qt.black)
         self.cutter_color = QColor(Qt.red)
         self.cut_line_color = QColor(Qt.blue)
-        self.can_w = 600
-        self.can_h = 600
 
         self.ctrl_pressed = False
         self.lines = []
@@ -35,11 +33,12 @@ class MyWindow(QMainWindow):
         self.follow_cutter = None
 
         # Добавляем полотно
-        self.scene = QGraphicsScene(0, 0, self.can_w, self.can_h)
+        self.scene = QGraphicsScene(0, 0, 1920, 1080)
         self.mainview.setScene(self.scene)
-        self.image = QImage(self.can_w, self.can_h, QImage.Format_ARGB32_Premultiplied)
         self.pen = QPen()
-        self.pixmap = QPixmap(self.can_w, self.can_h)
+        self.mainview.ensureVisible(0, 0, 0, 0)
+        self.mainview.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.mainview.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         # Элементы ввода в интерфейсе
         self.inputs = [
