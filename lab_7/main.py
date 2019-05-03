@@ -5,7 +5,8 @@ from PyQt5 import uic
 import sys
 
 from funcs import *
-from simple_cut_v2 import simple_cut
+from simple_cut import easy_cut
+
 
 # Класс главного окна
 class MyWindow(QMainWindow):
@@ -153,11 +154,19 @@ def choose_cutter(self):
 
 
 def cut(self):
-    for i in range(len(self.lines)):
-        visible, p1, p2 = simple_cut(self.lines[i], self.cutter)
-        print(visible, p1, p2)
-        if visible:
-            draw_line(self, p1, p2, self.cut_line_color)
+    if self.cutter:
+        for i in range(len(self.lines)):
+            xl = self.cutter.x_left
+            xr = self.cutter.x_right
+            yd = self.cutter.y_down
+            yu = self.cutter.y_up
+            p1 = [self.lines[i].x1, self.lines[i].y1]
+            p2 = [self.lines[i].x2, self.lines[i].y2]
+            yu, yd = yd, yu
+
+            visible, p1, p2 = easy_cut(xl, xr, yd, yu, p1, p2)
+            if visible:
+                draw_line(self, p1, p2, self.cut_line_color)
 
 
 def clear(self):
