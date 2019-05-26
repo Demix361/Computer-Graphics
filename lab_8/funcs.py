@@ -30,6 +30,22 @@ def add_line(self, x1, y1, x2, y2, color):
 	self.lines.append(line)
 
 
+def redraw_cutter(self):
+	if self.cutter:
+		n = len(self.cutter.coords)
+
+		for i in self.cutter.scene_items:
+			self.scene.removeItem(i)
+		self.cutter.scene_items.clear()
+
+		self.pen.setColor(self.cutter_color)
+		for i in range(n):
+			p1 = self.cutter.coords[i - 1]
+			p2 = self.cutter.coords[i]
+
+			self.cutter.scene_items.append(self.scene.addLine(p1[0], p1[1], p2[0], p2[1], self.pen))
+
+
 # OK
 def del_cutter(self):
 	if self.cutter:
@@ -60,7 +76,7 @@ def line_on_screen(self, x, y):
 			add_line(self, c1[0], c1[1], c2[0], c2[1], self.line_color)
 			self.cur_line.clear()
 			self.scene.removeItem(self.follow_line)
-
+			redraw_cutter(self)
 
 
 def cutter_on_screen(self, x, y):
@@ -148,6 +164,12 @@ def highlight(self, p1, p2):
 		else:
 			line = self.scene.addLine(p1[0] - 1 + i, p1[1], p2[0] - 1 + i, p2[1], self.pen)
 
-		self.higlighted_lines.append(line)
+		self.highlighted_lines.append(line)
+
+
+def remove_highlight(self):
+	for i in self.highlighted_lines:
+		self.scene.removeItem(i)
+	self.highlighted_lines.clear()
 
 

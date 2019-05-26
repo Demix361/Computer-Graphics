@@ -21,7 +21,7 @@ class MyWindow(QMainWindow):
         self.line_color = QColor(Qt.black)
         self.cutter_color = QColor(Qt.red)
         self.cut_line_color = QColor(Qt.green)
-        self.higlighted_lines = []
+        self.highlighted_lines = []
 
         self.ctrl_pressed = False
         self.lines = []
@@ -106,6 +106,7 @@ class MyWindow(QMainWindow):
         but = event.button()
         x = event.x()
         y = event.y()
+
         borders = self.mainview.geometry().getCoords()
         if borders[0] <= x < borders[2] and borders[1] <= y < borders[3]:
             x -= borders[0]
@@ -116,6 +117,7 @@ class MyWindow(QMainWindow):
         if but == 1:
             line_on_screen(self, x, y)
             cutter_on_screen(self, x, y)
+            remove_highlight(self)
 
         if but == 2:
             end_cutter_on_screen(self)
@@ -146,6 +148,7 @@ def choose_cutter(self):
     del_cutter(self)
     self.cutter = Cutter()
     self.drawing_cutter = True
+    remove_highlight(self)
 
 
 def cut(self):
@@ -156,8 +159,7 @@ def cut(self):
             mes("Отсекатель невыпуклый")
             return -1
 
-        for i in self.higlighted_lines:
-            self.scene.removeItem(i)
+        remove_highlight(self)
 
         for i in range(len(self.lines)):
             p1 = [self.lines[i].x1, self.lines[i].y1]
@@ -167,6 +169,8 @@ def cut(self):
 
             if visible:
                 highlight(self, r1, r2)
+
+        redraw_cutter(self)
                 
             
 
