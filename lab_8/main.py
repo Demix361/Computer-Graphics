@@ -137,11 +137,41 @@ def get_line(self):
 
 
 def get_cutter(self):
-    pass
+    try:
+        x = int(self.inp_x_cutter.text())
+        y = int(self.inp_y_cutter.text())
+    except ValueError:
+        mes("Неверные данные отсекателя")
+        return -1
+
+    if self.drawing_cutter == False:
+        del_cutter(self)
+        remove_highlight(self)
+
+    if not self.cutter:
+        print("created cutter")
+        self.cutter = Cutter()
+        self.drawing_cutter = True
+
+    self.cutter.coords.append((x, y))
+
+    if len(self.cutter.coords) > 1:
+        print("here")
+        self.pen.setColor(self.cutter_color)
+        c = self.cutter.coords
+        self.cutter.scene_items.append(self.scene.addLine(c[-1][0], c[-1][1], c[-2][0], c[-2][1], self.pen))
 
 
 def end_cutter(self):
-    pass
+    if self.drawing_cutter:
+        self.pen.setColor(self.cutter_color)
+
+        if len(self.cutter.coords) > 2:
+            c = self.cutter.coords
+            self.cutter.scene_items.append(self.scene.addLine(c[-1][0], c[-1][1], c[0][0], c[0][1], self.pen))
+
+            self.drawing_cutter = False
+            self.scene.removeItem(self.follow_cutter)
 
 
 def choose_cutter(self):
@@ -157,6 +187,7 @@ def cut(self):
         convex, clockwise = check_convex_polygon(self.cutter.coords)
         if convex == False:
             mes("Отсекатель невыпуклый")
+            del_cutter(self)
             return -1
 
         remove_highlight(self)
@@ -173,9 +204,6 @@ def cut(self):
         redraw_cutter(self)
                 
             
-
-
-
 
 def clear(self):
     self.scene.clear()
