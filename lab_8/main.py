@@ -20,7 +20,8 @@ class MyWindow(QMainWindow):
         self.bg_color = QColor(Qt.white)
         self.line_color = QColor(Qt.black)
         self.cutter_color = QColor(Qt.red)
-        self.cut_line_color = QColor(Qt.blue)
+        self.cut_line_color = QColor(Qt.green)
+        self.higlighted_lines = []
 
         self.ctrl_pressed = False
         self.lines = []
@@ -149,9 +150,25 @@ def choose_cutter(self):
 
 def cut(self):
     if self.cutter and len(self.cutter.coords) > 2:
-        if check_convex_polygon(self) == False:
+
+        convex, clockwise = check_convex_polygon(self.cutter.coords)
+        if convex == False:
             mes("Отсекатель невыпуклый")
             return -1
+
+        for i in self.higlighted_lines:
+            self.scene.removeItem(i)
+
+        for i in range(len(self.lines)):
+            p1 = [self.lines[i].x1, self.lines[i].y1]
+            p2 = [self.lines[i].x2, self.lines[i].y2]
+            
+            visible, r1, r2 = cyrus_beck(self.cutter.coords, p1, p2, clockwise)
+
+            if visible:
+                highlight(self, r1, r2)
+                
+            
 
 
 
