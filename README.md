@@ -8,7 +8,7 @@
 | Lab 5| 🤙 |<a href="../../blob/master/lab_5/README.md">Task</a>|
 | Lab 6| 🤙 |<a href="../../blob/master/lab_6/README.md">Task</a>|
 | Lab 7| 🤙 |<a href="../../blob/master/lab_7/README.md">Task</a>|
-| Lab 8| 😎 |<a href="../../blob/master/lab_8/README.md">Task</a>|
+| Lab 8| 🤙 |<a href="../../blob/master/lab_8/README.md">Task</a>|
 | Lab 9| 😐 |<a href="../../blob/master/lab_9/README.md">Task</a>|
 | Lab 10|😐 |<a href="../../blob/master/lab_10/README.md">Task</a>|
 
